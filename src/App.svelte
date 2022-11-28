@@ -130,8 +130,8 @@
 
 <main class="h-full flex flex-col">
   <div id="map" class="flex-1" />
-  <div class="p-2">
-    <h1 class="text-xl">Challenges</h1>
+  <div>
+    <h1 class="text-xl p-2">Honey Scavenger Hunt Challenges</h1>
     <div class="max-h-[30vh] overflow-y-scroll">
       <ul class="menu p-2">
         {#each challenges as data, i}
