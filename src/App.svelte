@@ -132,7 +132,7 @@
   <div id="map" class="flex-1" />
   <div class="p-2">
     <h1 class="text-xl">Challenges</h1>
-    <div class="max-h-60 overflow-y-scroll">
+    <div class="max-h-[30vh] overflow-y-scroll">
       <ul class="menu p-2">
         {#each challenges as data, i}
           <li>
