@@ -100,11 +100,11 @@
         [-33.853418374735334, 151.20314460366174],
         [-33.863664176851906, 151.21494632369132],
       ],
-    }).setView([-33.85803526895217, 151.20859419563487], 17);
+    }).setView([-33.85803526895217, 151.20859419563487], 16);
     Leaflet.tileLayer(
       "https://{s}.tile.jawg.io/jawg-sunny/{z}/{x}/{y}{r}.png?access-token=GZQzSfPKg5ysveVGL3cr0No9YYGhlNkbxtpqF8nyQu4qWnSXj83kZpwnzG73lVmF",
       {
-        minZoom: 16,
+        minZoom: 15,
         maxZoom: 20,
       }
     ).addTo(map);
