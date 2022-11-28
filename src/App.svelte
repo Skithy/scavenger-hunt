@@ -1,7 +1,6 @@
 <script type="ts">
   import Leaflet from "leaflet";
   import { onMount } from "svelte";
-  import { dataset_dev } from "svelte/internal";
 
   const createIcon = (content: string) =>
     Leaflet.divIcon({
@@ -13,6 +12,14 @@
       popupAnchor: [0, -30],
       html: content,
     });
+
+  const hereIcon = Leaflet.divIcon({
+    className: "bg-primary !h-6 !w-6 rounded-full",
+    shadowSize: [20, 30], // size of the shadow
+    iconAnchor: [20, 40],
+    shadowAnchor: [4, 30], // the same for the shadow
+    popupAnchor: [0, -30],
+  });
 
   type Challenge = {
     location?: {
@@ -92,6 +99,7 @@
     },
   ];
 
+  let posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon });
   let markers: Leaflet.Marker[] = [];
 
   onMount(() => {
@@ -119,11 +127,27 @@
         markers.push(marker);
       }
     });
+
+    getLocation();
+    posMarker.addTo(map);
   });
 
   function focusMarker(index: number) {
     if (index < markers.length) {
       markers[index].openPopup();
+    }
+  }
+
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition((position) => {
+        posMarker.setLatLng([
+          position.coords.latitude,
+          position.coords.longitude,
+        ]);
+      });
+    } else {
+      alert("geolocation is not supported");
     }
   }
 </script>
