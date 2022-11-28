@@ -128,11 +128,11 @@
   }
 </script>
 
-<main class="h-full flex flex-col">
+<main class="h-full flex flex-col md:flex-row">
   <div id="map" class="flex-1" />
   <div>
     <h1 class="text-xl p-2">Honey Scavenger Hunt Challenges</h1>
-    <div class="max-h-[30vh] overflow-y-scroll">
+    <div class="max-h-[30vh] md:max-h-full overflow-y-scroll">
       <ul class="menu p-2">
         {#each challenges as data, i}
           <li>
