@@ -115,7 +115,7 @@
           icon: createIcon((index + 1).toString()),
         })
           .addTo(map)
-          .bindPopup(data.description);
+          .bindPopup(data.description, { className: "max-w-[200px]" });
         markers.push(marker);
       }
     });
