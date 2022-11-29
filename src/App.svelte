@@ -174,7 +174,7 @@
 
 <main class="h-full flex flex-col md:flex-row">
   <div id="map" class="flex-1" />
-  <div class="relative h-[35vh] md:h-full flex flex-col">
+  <div class="relative h-[30vh] md:h-full flex flex-col">
     {#if selectedIndex !== undefined}
       <div
         class="absolute inset-0 bg-base-100 z-10"
