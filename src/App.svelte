@@ -1,11 +1,13 @@
 <script type="ts">
   import Leaflet from "leaflet";
   import { onMount } from "svelte";
+  import { fly } from "svelte/transition";
 
-  const createIcon = (content: string) =>
+  const createIcon = (content: string, active = false) =>
     Leaflet.divIcon({
-      className:
-        "bg-accent text-accent-content !h-10 !w-10 opacity-80 rounded-full !flex items-center justify-center text-xl",
+      className: `bg-accent/75 text-accent-content border-4 ${
+        active ? "border-primary !z-[300]" : "border-accent"
+      } !h-10 !w-10 rounded-full !flex items-center justify-center text-xl`,
       shadowSize: [20, 30], // size of the shadow
       iconAnchor: [20, 40],
       shadowAnchor: [4, 30], // the same for the shadow
@@ -83,7 +85,7 @@
     {
       location: {
         coords: [-33.86126950448042, 151.2135332555823],
-        name: "Memory is Crewation without End",
+        name: "Memory is Creation without End",
       },
       description:
         "Pretend you’re in a band.<br/>Pose for your next album cover with some building off-cuts.<br/>Tell us the name of your album and it’s genre when you send us your photo.",
@@ -99,14 +101,17 @@
     },
   ];
 
+  let selectedIndex: number | undefined;
   let posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon });
   let markers: Leaflet.Marker[] = [];
+  let map: Leaflet.Map;
+  let scroll = 0;
 
   onMount(() => {
-    const map = Leaflet.map("map", {
+    map = Leaflet.map("map", {
       maxBounds: [
-        [-33.85359351359127, 151.19972638009483],
-        [-33.86361033446847, 151.21671998849837],
+        [-33.85, 151.19972638009483],
+        [-33.868, 151.218],
       ],
     }).setView([-33.85803526895217, 151.20859419563487], 16);
     Leaflet.tileLayer(
@@ -121,9 +126,10 @@
       if (data.location) {
         const marker = Leaflet.marker(data.location.coords, {
           icon: createIcon((index + 1).toString()),
-        })
-          .addTo(map)
-          .bindPopup(data.description, { className: "max-w-[200px]" });
+        }).addTo(map);
+        marker.on("click", () => {
+          focusMarker(index);
+        });
         markers.push(marker);
       }
     });
@@ -132,9 +138,23 @@
     posMarker.addTo(map);
   });
 
-  function focusMarker(index: number) {
+  function unfocusMarker() {
+    if (selectedIndex !== undefined) {
+      if (selectedIndex < markers.length) {
+        markers[selectedIndex].setIcon(
+          createIcon((selectedIndex + 1).toString(), false)
+        );
+      }
+      selectedIndex = undefined;
+    }
+  }
+
+  function focusMarker(index: number, zoom?: boolean) {
+    unfocusMarker();
+    selectedIndex = index;
     if (index < markers.length) {
-      markers[index].openPopup();
+      map?.flyTo(markers[index].getLatLng(), zoom ? 17 : undefined);
+      markers[index].setIcon(createIcon((index + 1).toString(), true));
     }
   }
 
@@ -154,13 +174,29 @@
 
 <main class="h-full flex flex-col md:flex-row">
   <div id="map" class="flex-1" />
-  <div>
+  <div class="relative h-[35vh] md:h-full flex flex-col">
+    {#if selectedIndex !== undefined}
+      <div
+        class="absolute inset-0 bg-base-100 z-10"
+        transition:fly={{ x: 400, opacity: 1 }}
+      >
+        <button on:click={unfocusMarker}>Back</button>
+        <h1 class="text-xl p-2">
+          {selectedIndex + 1}: {challenges[selectedIndex].location
+            ? challenges[selectedIndex].location.name
+            : challenges[selectedIndex].description}
+        </h1>
+        <div class="overflow-y-scroll p-2">
+          {challenges[selectedIndex].description}
+        </div>
+      </div>
+    {/if}
     <h1 class="text-xl p-2">Honey Scavenger Hunt Challenges</h1>
-    <div class="max-h-[30vh] md:max-h-full overflow-y-scroll">
+    <div class="overflow-y-scroll">
       <ul class="menu p-2">
         {#each challenges as data, i}
           <li>
-            <button on:click={() => focusMarker(i)}
+            <button on:click={() => focusMarker(i, true)}
               >{i + 1}: {data.location
                 ? data.location.name
                 : data.description}</button
