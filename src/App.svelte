@@ -63,13 +63,15 @@
   });
 
   function toggleExpanded(newState = !expanded) {
-    expanded = newState;
-    return new Promise((res) => {
-      setTimeout(() => {
-        map.invalidateSize({ pan: false });
-        res(null);
-      }, 200);
-    });
+    if (expanded !== newState) {
+      expanded = newState;
+      return new Promise((res) => {
+        setTimeout(() => {
+          map.invalidateSize({ pan: false });
+          res(null);
+        }, 200);
+      });
+    }
   }
 
   function unfocusMarker() {
@@ -85,8 +87,8 @@
 
   async function focusMarker(index: number, zoom?: boolean) {
     unfocusMarker();
-    await toggleExpanded(true);
     selectedIndex = index;
+    await toggleExpanded(true);
     if (index < markers.length) {
       map.flyTo(markers[index].getLatLng(), zoom ? 17 : undefined);
       markers[index].setIcon(createIcon((index + 1).toString(), true));
