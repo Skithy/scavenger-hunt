@@ -64,7 +64,12 @@
 
   function toggleExpanded(newState = !expanded) {
     expanded = newState;
-    map.invalidateSize({ pan: false });
+    return new Promise((res) => {
+      setTimeout(() => {
+        map.invalidateSize({ pan: false });
+        res(null);
+      }, 200);
+    });
   }
 
   function unfocusMarker() {
@@ -78,9 +83,9 @@
     }
   }
 
-  function focusMarker(index: number, zoom?: boolean) {
+  async function focusMarker(index: number, zoom?: boolean) {
     unfocusMarker();
-    toggleExpanded(true);
+    await toggleExpanded(true);
     selectedIndex = index;
     if (index < markers.length) {
       map.flyTo(markers[index].getLatLng(), zoom ? 17 : undefined);
