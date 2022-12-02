@@ -2,6 +2,7 @@
   import Leaflet from "leaflet";
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
+  import { anywhereChallenges, challenges } from "./challenges";
 
   const createIcon = (content: string, active = false) =>
     Leaflet.divIcon({
@@ -23,89 +24,12 @@
     popupAnchor: [0, -30],
   });
 
-  type Challenge = {
-    location?: {
-      coords: [number, number];
-      name: string;
-    };
-    description: string;
-  };
-
-  const challenges: Challenge[] = [
-    {
-      location: {
-        coords: [-33.8570829503414, 151.20922473426515],
-        name: "Honey Office",
-      },
-      description: "Solve this movie quote",
-    },
-    {
-      location: {
-        coords: [-33.85779725595838, 151.20880174912443],
-        name: "Playfair St",
-      },
-      description: "Take a photo of the sandy trio",
-    },
-    {
-      location: {
-        coords: [-33.85832079294985, 151.20808850678037],
-        name: "Foundation Park",
-      },
-      description: "Take a family portrait with a resident of Foundation Park",
-    },
-    {
-      location: {
-        coords: [-33.85969678809165, 151.20905456097734],
-        name: "Museum of Contemporary Art",
-      },
-      description:
-        "Take a photo of [open-ended description of artwork] on level X of the MCA",
-    },
-    {
-      location: {
-        coords: [-33.86002086226806, 151.20901566894543],
-        name: "Museum of Contemporary Art",
-      },
-      description: "Take a photo of 8 flags",
-    },
-    {
-      location: {
-        coords: [-33.85913200650135, 151.20479104526223],
-        name: "Sydney Observatory",
-      },
-      description: "Shoot for the moon, where stargazers meet",
-    },
-    {
-      location: {
-        coords: [-33.86199113923606, 151.21229407502204],
-        name: "Justice and Police Museum",
-      },
-      description: "Take a team selfie with a crim",
-    },
-    {
-      location: {
-        coords: [-33.86126950448042, 151.2135332555823],
-        name: "Memory is Creation without End",
-      },
-      description:
-        "Pretend you’re in a band.<br/>Pose for your next album cover with some building off-cuts.<br/>Tell us the name of your album and it’s genre when you send us your photo.",
-    },
-    {
-      description: "Photobomb a tourist’s pic",
-    },
-    {
-      description: "Take a photo with a street performer",
-    },
-    {
-      description: "Enjoy an icecream",
-    },
-  ];
-
   let selectedIndex: number | undefined;
   let posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon });
   let markers: Leaflet.Marker[] = [];
   let map: Leaflet.Map;
-  let scroll = 0;
+  let expanded = false;
+  let tab: "specific" | "anywhere" = "specific";
 
   onMount(() => {
     map = Leaflet.map("map", {
@@ -138,6 +62,11 @@
     posMarker.addTo(map);
   });
 
+  function toggleExpanded(newState = !expanded) {
+    expanded = newState;
+    map.invalidateSize({ pan: false });
+  }
+
   function unfocusMarker() {
     if (selectedIndex !== undefined) {
       if (selectedIndex < markers.length) {
@@ -151,9 +80,10 @@
 
   function focusMarker(index: number, zoom?: boolean) {
     unfocusMarker();
+    toggleExpanded(true);
     selectedIndex = index;
     if (index < markers.length) {
-      map?.flyTo(markers[index].getLatLng(), zoom ? 17 : undefined);
+      map.flyTo(markers[index].getLatLng(), zoom ? 17 : undefined);
       markers[index].setIcon(createIcon((index + 1).toString(), true));
     }
   }
@@ -173,12 +103,16 @@
 </script>
 
 <main class="h-full flex flex-col md:flex-row">
-  <div id="map" class="flex-1" />
-  <div class="relative h-[30vh] md:h-full flex flex-col">
+  <div id="map" class="flex-1 -mb-8" />
+  <div
+    class="relative {expanded
+      ? 'h-[70vh]'
+      : 'h-[35vh]'} md:h-full flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-300"
+  >
     {#if selectedIndex !== undefined}
       <div
-        class="absolute inset-0 bg-base-100 z-10"
-        transition:fly={{ x: 400, opacity: 1 }}
+        class="absolute inset-0 bg-base-100 shadow-md rounded-t-2xl z-20"
+        transition:fly={{ y: 600, opacity: 1 }}
       >
         <button on:click={unfocusMarker}>Back</button>
         <h1 class="text-xl p-2">
@@ -191,18 +125,72 @@
         </div>
       </div>
     {/if}
-    <h1 class="text-xl p-2">Honey Scavenger Hunt Challenges</h1>
+    <button
+      class="text-xl px-4 pt-5 pb-3 flex justify-between"
+      on:click={() => toggleExpanded()}
+    >
+      <span>Your challenges</span>
+      <span class="transition {expanded ? 'rotate-0' : 'rotate-180'}">V</span>
+    </button>
     <div class="overflow-y-scroll">
-      <ul class="menu p-2">
-        {#each challenges as data, i}
-          <li>
-            <button on:click={() => focusMarker(i, true)}
-              >{i + 1}: {data.location
-                ? data.location.name
-                : data.description}</button
-            >
-          </li>
-        {/each}
+      <div class="px-4 mb-6">
+        Finish as many challenges as you can to claim glory (and a prize) for
+        your team. It's up to you how many & which ones you want to do. Choose
+        wisely & have fun!
+      </div>
+      <div
+        class="flex gap-x-3 px-4 sticky top-0 bg-base-100 z-10 pb-4 border-b-2 border-base-300 shadow"
+      >
+        <button
+          class="text-sm transition p-1 flex-1 {tab === 'specific' &&
+            'bg-base-200 font-bold'} border-base-200 border-2 rounded-lg"
+          on:click={() => (tab = "specific")}
+          >{tab === "specific" ? "✔️ " : ""}Specific locations</button
+        >
+        <button
+          class="text-sm transition p-1 flex-1 {tab === 'anywhere' &&
+            'bg-base-200 font-bold'} border-base-200 border-2 rounded-lg"
+          on:click={() => (tab = "anywhere")}
+          >{tab === "anywhere" ? "✔️ " : ""}Do anywhere</button
+        >
+      </div>
+      <ul class="flex flex-col">
+        {#if tab === "specific"}
+          {#each challenges as data, i}
+            <li class="contents">
+              <button
+                class="grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 border-b-2 border-base-300 p-4 text-left"
+                on:click={() => focusMarker(i, true)}
+              >
+                <div>📌</div>
+                <div>{data.name}</div>
+                <div class="text-xs">50m</div>
+                <div class="text-xs">
+                  {data.location.name}
+                  <span class="ml-2">
+                    🏆 {data.points}
+                  </span>
+                </div>
+              </button>
+            </li>
+          {/each}
+        {:else}
+          {#each anywhereChallenges as data, i}
+            <li class="contents">
+              <button
+                class="block border-b-2 border-base-300 p-4 text-left"
+                on:click={() => focusMarker(i, true)}
+              >
+                <div>
+                  {data.name}
+                </div>
+                <div class="text-xs mt-1">
+                  🏆 {data.points}
+                </div></button
+              >
+            </li>
+          {/each}
+        {/if}
       </ul>
     </div>
   </div>
