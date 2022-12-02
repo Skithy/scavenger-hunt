@@ -24,12 +24,12 @@
     popupAnchor: [0, -30],
   });
 
-  let selectedIndex: number | undefined = 1;
+  let selectedIndex: number | undefined;
   $: selectedChallenge = challenges[selectedIndex];
   let posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon });
   let markers: Leaflet.Marker[] = [];
   let map: Leaflet.Map;
-  let expanded = true;
+  let expanded = false;
   let tab: "specific" | "anywhere" = "specific";
 
   onMount(() => {
