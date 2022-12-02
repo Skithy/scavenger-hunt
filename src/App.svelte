@@ -24,11 +24,12 @@
     popupAnchor: [0, -30],
   });
 
-  let selectedIndex: number | undefined;
+  let selectedIndex: number | undefined = 1;
+  $: selectedChallenge = challenges[selectedIndex];
   let posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon });
   let markers: Leaflet.Marker[] = [];
   let map: Leaflet.Map;
-  let expanded = false;
+  let expanded = true;
   let tab: "specific" | "anywhere" = "specific";
 
   onMount(() => {
@@ -116,24 +117,45 @@
       ? 'h-[70vh]'
       : 'h-[35vh]'} md:h-full flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-300"
   >
-    {#if selectedIndex !== undefined}
+    {#if selectedChallenge !== undefined}
       <div
-        class="absolute inset-0 bg-base-100 shadow-md rounded-t-2xl z-20"
+        class="absolute inset-0 bg-base-100 shadow-md rounded-t-2xl z-20 flex flex-col"
         transition:fly={{ y: 600, opacity: 1 }}
       >
-        <button on:click={unfocusMarker}>Back</button>
-        <h1 class="text-xl p-2">
-          {selectedIndex + 1}: {challenges[selectedIndex].location
-            ? challenges[selectedIndex].location.name
-            : challenges[selectedIndex].description}
-        </h1>
-        <div class="overflow-y-scroll p-2">
-          {challenges[selectedIndex].description}
+        <button
+          class="text-xl px-4 pt-6 pb-3 flex w-full"
+          on:click={unfocusMarker}>&lt;</button
+        >
+        <div class="overflow-y-scroll px-4">
+          <h1 class="text-xl">
+            {selectedChallenge.name}
+          </h1>
+          <h2 class="underline font-bold text-sm mt-2 mb-6">
+            {#if selectedChallenge.location}
+              <a href="/" target="_blank">{selectedChallenge.location.name}</a>
+            {:else}
+              Anywhere
+            {/if}
+          </h2>
+          <p>{selectedChallenge.description}</p>
+          <div class="mt-6 mb-3">🏆 Earn {selectedChallenge.points} point</div>
+          <div>📷 Upload the pic in your Slack channel</div>
+          <label class="flex justify-between py-2 my-4">
+            Nailed it, cross it off my list!
+            <input class="checkbox" type="checkbox" />
+          </label>
+          <div class="-mx-4">
+            <img
+              class="w-full"
+              src="https://lh5.googleusercontent.com/p/AF1QipODxgoMM_ZyWwDAf27VmY-DxkTMnx9z-47fp_ok=w203-h152-k-no"
+              alt={selectedChallenge.location.name}
+            />
+          </div>
         </div>
       </div>
     {/if}
     <button
-      class="text-xl px-4 pt-5 pb-3 flex justify-between"
+      class="text-xl px-4 pt-6 pb-3 flex justify-between"
       on:click={() => toggleExpanded()}
     >
       <span>Your challenges</span>

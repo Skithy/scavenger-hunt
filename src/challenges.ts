@@ -23,8 +23,9 @@ export const challenges: Challenge[] = [
       coords: [-33.85779725595838, 151.20880174912443],
       name: "Cadman's Cottage",
     },
-    name: '???',
-    description: '',
+    name: 'Feast on Aussie icons',
+    description:
+      'A spoon of Vegemite or eat a whole Weetbix without water? Your choice.',
     points: '1',
   },
   {
