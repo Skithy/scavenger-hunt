@@ -155,34 +155,27 @@
       </div>
     {/if}
     <button
-      class="text-xl px-4 pt-6 pb-3 flex justify-between"
+      class="px-4 pt-6 pb-3 flex justify-between"
       on:click={() => toggleExpanded()}
     >
-      <span>Your challenges</span>
+      <span>Team challenges</span>
       <span class="transition {expanded ? 'rotate-0' : 'rotate-180'}">V</span>
     </button>
-    <div class="overflow-y-scroll">
-      <div class="px-4 mb-6">
-        Finish as many challenges as you can to claim glory (and a prize) for
-        your team. It's up to you how many & which ones you want to do. Choose
-        wisely & have fun!
-      </div>
-      <div
-        class="flex gap-x-3 px-4 sticky top-0 bg-base-100 z-10 pb-4 border-b-2 border-base-300 shadow"
+    <div class="flex shadow-lg">
+      <button
+        class="text-xs transition p-2 flex-1 {tab === 'specific'
+          ? 'border-accent font-bold'
+          : 'border-base-200'} border-b-2"
+        on:click={() => (tab = "specific")}>Specific locations</button
       >
-        <button
-          class="text-sm transition p-1 flex-1 {tab === 'specific' &&
-            'bg-base-200 font-bold'} border-base-200 border-2 rounded-lg"
-          on:click={() => (tab = "specific")}
-          >{tab === "specific" ? "✔️ " : ""}Specific locations</button
-        >
-        <button
-          class="text-sm transition p-1 flex-1 {tab === 'anywhere' &&
-            'bg-base-200 font-bold'} border-base-200 border-2 rounded-lg"
-          on:click={() => (tab = "anywhere")}
-          >{tab === "anywhere" ? "✔️ " : ""}Do anywhere</button
-        >
-      </div>
+      <button
+        class="text-xs transition p-2 flex-1 {tab === 'anywhere'
+          ? 'border-accent font-bold'
+          : 'border-base-300'} border-b-2"
+        on:click={() => (tab = "anywhere")}>Do anywhere</button
+      >
+    </div>
+    <div class="overflow-y-scroll">
       <ul class="flex flex-col">
         {#if tab === "specific"}
           {#each challenges as data, i}
