@@ -8,6 +8,7 @@
     locationChallenges,
     type Challenge,
   } from "./challenges";
+  import { getDistanceFromLatLonInKm, type Coord } from "./getDistance";
 
   const markerClass = (active = false) =>
     `!h-8 !w-8 rounded-full !flex items-center justify-center font-bold text-md shadow-md ${
@@ -39,7 +40,10 @@
   let selectedId: string | undefined;
   $: selectedChallenge = challenges[selectedId];
 
-  const posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon });
+  let currentCoord: Coord | undefined = undefined;
+  const posMarker: Leaflet.Marker = Leaflet.marker(currentCoord ?? [0, 0], {
+    icon: hereIcon,
+  });
   const markers: Record<string, Leaflet.Marker | undefined> = Object.entries(
     challenges
   ).reduce((total, [id, challenge]) => {
@@ -115,13 +119,30 @@
         //   position.coords.latitude,
         //   position.coords.longitude,
         // ]);
-
-        posMarker.setLatLng([-33.85803526895217, 151.20859419563487]);
+        currentCoord = [-33.85803526895217, 151.20859419563487];
+        posMarker.setLatLng(currentCoord);
       });
     } else {
       alert("geolocation is not supported");
     }
   }
+
+  $: getDistanceText = (challenge: Challenge) => {
+    if (!currentCoord) {
+      return "-";
+    }
+
+    const distance = getDistanceFromLatLonInKm(
+      challenge.location.coords,
+      currentCoord
+    );
+
+    if (distance > 1) {
+      return `${distance.toFixed(1)}km`;
+    }
+
+    return `${(distance * 1000).toFixed(0)}m`;
+  };
 </script>
 
 <main class="h-full flex flex-col md:flex-row">
@@ -192,36 +213,38 @@
     <div class="overflow-y-scroll">
       <ul class="flex flex-col">
         {#if tab === "specific"}
-          {#each locationChallenges as id}
+          {#each locationChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
                 class="grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 border-b-2 border-base-300 p-4 text-left"
-                on:click={() => focusMarker(id, true)}
+                on:click={() => focusMarker(challenge.id, true)}
               >
                 <div>📌</div>
-                <div>{challenges[id].name}</div>
-                <div class="text-xs">50m</div>
+                <div>{challenge.name}</div>
                 <div class="text-xs">
-                  {challenges[id].location.name}
+                  {getDistanceText(challenge)}
+                </div>
+                <div class="text-xs">
+                  {challenge.location.name}
                   <span class="ml-2">
-                    🏆 {challenges[id].points}
+                    🏆 {challenge.points}
                   </span>
                 </div>
               </button>
             </li>
           {/each}
         {:else}
-          {#each anywhereChallenges as id}
+          {#each anywhereChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
                 class="block border-b-2 border-base-300 p-4 text-left"
-                on:click={() => focusMarker(id, true)}
+                on:click={() => focusMarker(challenge.id, true)}
               >
                 <div>
-                  {challenges[id].name}
+                  {challenge.name}
                 </div>
                 <div class="text-xs mt-1">
-                  🏆 {challenges[id].points}
+                  🏆 {challenge.points}
                 </div></button
               >
             </li>
