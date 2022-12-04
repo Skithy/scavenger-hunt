@@ -186,7 +186,7 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
     },
     name: 'Dance battle',
     description:
-      'Get ready for tonight’s dancefloor. Show us your moves by recreating this [tiktok dance](https://www.tiktok.com/@junpei.zaki/video/7172858706902650114).',
+      'Get ready for tonight’s dancefloor. Show us your moves by recreating this [tiktok dance](https://youtu.be/SsHzl9cK1ls).',
     points: '3',
     photo: susannahPlace,
   },
