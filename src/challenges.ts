@@ -1,227 +1,258 @@
+import ampForecourt from './assets/photos/amp-forecourt.png'
+import blighBarneyReserve from './assets/photos/bligh-barney-reserve.png'
+import firstFleetPark from './assets/photos/first-fleet-park.png'
+import foundationPark from './assets/photos/foundation-park.png'
+import justiceAndPoliceMuseum from './assets/photos/justice-and-police-museum.png'
+import mcaCafe from './assets/photos/mca-cafe.png'
+import mcaForecourt from './assets/photos/mca-forecourt.png'
+import mca from './assets/photos/mca.png'
+import memoryIsCreationWithoutEnd from './assets/photos/memory-is-creation-without-end.png'
+import messina from './assets/photos/messina.png'
+import observatoryHill from './assets/photos/observatory-hill.png'
+import rocksMarket from './assets/photos/rocks-market.png'
+import susannahPlace from './assets/photos/susannah-place.png'
+
 export type Challenge = {
   id: string
   location?: {
     coords: [number, number]
     name: string
+    link?: string
   }
   name: string
   description: string
   points: string
+  photo?: string
 }
 
 export const challenges: Record<string, Challenge> = {
-  'shackle-up': {
-    id: 'shackle-up',
+  /** Local */
+  convict: {
+    id: 'convict',
     location: {
-      coords: [-33.8570829503414, 151.20922473426515],
-      name: 'The Rocks Square',
+      coords: [-33.85783831563544, 151.20870355471794],
+      name: 'The Rocks Market',
+      link: 'https://goo.gl/maps/FVpLztKbFBBJBgZA8',
     },
     name: 'Shackle up!',
-    description: '',
+    description:
+      'Find the sandy trio and show us your best impression of a weary convict.',
     points: '1',
+    photo: rocksMarket,
   },
-  'aussie-feast': {
-    id: 'aussie-feast',
+  tower: {
+    id: 'tower',
     location: {
-      coords: [-33.85779725595838, 151.20880174912443],
-      name: "Cadman's Cottage",
+      coords: [-33.85913981928262, 151.20921873974578],
+      name: 'Bligh & Barney Reserve',
+      link: 'https://goo.gl/maps/XQ4B4bVstaUZZFb39',
+    },
+    name: 'Faulty towers',
+    description:
+      'Build a spaghetti tower in 2 minutes. Highest tower wins bonus points.',
+    points: '1',
+    photo: blighBarneyReserve,
+  },
+  house: {
+    id: 'house',
+    location: {
+      coords: [-33.85829707395864, 151.20801120391684],
+      name: 'Foundation Park',
+      link: 'https://goo.gl/maps/r9DiHFKWTmpUKztd7',
+    },
+    name: 'House call',
+    description: `Two tasks:
+    1. What items are on the dresser?
+    2. Take a photo of the creepiest room you can find. Creepiest photo gets bonus points.
+    3. Take a team photo by the fire.`,
+    points: '1',
+    photo: foundationPark,
+  },
+  icecream: {
+    id: 'icecream',
+    location: {
+      coords: [-33.86175629580389, 151.20973598544367],
+      name: 'Messina',
+      link: 'https://goo.gl/maps/qUxEdetmivejGz1G8',
+    },
+    name: 'Enjoy a free ice cream',
+    description:
+      'The hardest challenge of all. Enjoy a free single scoop icecream on us!',
+    points: '1',
+    photo: messina,
+  },
+  jump: {
+    id: 'jump',
+    location: {
+      coords: [-33.859130348828415, 151.20498740923128],
+      name: 'Observatory Hill',
+      link: 'https://goo.gl/maps/Skt5w7hHj382N3zv5',
+    },
+    name: 'Space Jam',
+    description:
+      'Jump higher than Jordan and shoot for the stars! Get a team pic of everyone airborne. No points if anyone is touching the ground.',
+    points: '3',
+    photo: observatoryHill,
+  },
+  copycat: {
+    id: 'copycat',
+    location: {
+      coords: [-33.85992717236538, 151.20902509839397],
+      name: 'Museum of Contemporary Art',
+      link: 'https://goo.gl/maps/wmCrc2GV2pPWajcu8',
+    },
+    name: 'Copy cat',
+    description:
+      'Head to Level 1 and find the artwork that captures your best pose.',
+    points: '1',
+    photo: mca,
+  },
+  flags: {
+    id: 'flags',
+    location: {
+      coords: [-33.85967253800222, 151.20921908762242],
+      name: 'MCA Cafe',
+      link: 'https://goo.gl/maps/rJ4oay17VLcJAj6Z6',
+    },
+    name: '8 flags',
+    description: 'Take a photo of 8 flags in one shot.',
+    points: '1',
+    photo: mcaCafe,
+  },
+  zodiac: {
+    id: 'zodiac',
+    location: {
+      coords: [-33.859603355862205, 151.20947615269063],
+      name: 'MCA forecourt',
+      link: 'https://goo.gl/maps/vLKGEZyYwcWghceZ7',
+    },
+    name: 'Year of the Tiger',
+    description: `
+      Pose as your favourite Chinese zodiac animal, in front of Lindy Lee’s sculpture, Secret World of a Starlight Ember.
+      Bonus points if your team chooses a Zodiac animal that no other team has chosen.`,
+    points: '1',
+    photo: mcaForecourt,
+  },
+  feast: {
+    id: 'feast',
+    location: {
+      coords: [-33.8608043691319, 151.20911977033663],
+      name: 'First Fleet Park',
+      link: 'https://goo.gl/maps/Ep13PDQRuGWe4PXc7',
     },
     name: 'Feast on Aussie icons',
     description:
-      'A spoon of Vegemite or eat a whole Weetbix without water? Your choice.',
+      'Savour one of our tasty, well-loved Aussie icons to score a point!',
     points: '1',
+    photo: firstFleetPark,
   },
-  'wheres-my-stuff': {
-    id: 'wheres-my-stuff',
+  criminal: {
+    id: 'criminal',
     location: {
-      coords: [-33.85779725595838, 151.20880174912443],
-      name: 'Foundation Park',
-    },
-    name: "Where's my stuff?",
-    description: '',
-    points: '1',
-  },
-  'gimme the creeps': {
-    id: 'gimme the creeps',
-    location: {
-      coords: [-33.85832079294985, 151.20808850678037],
-      name: 'Foundation Park',
-    },
-    name: 'Gimme the creeps!',
-    description: '',
-    points: '1',
-  },
-  'its-getting-hot-in-here': {
-    id: 'its-getting-hot-in-here',
-    location: {
-      coords: [-33.85969678809165, 151.20905456097734],
-      name: 'Foundation Park',
-    },
-    name: "It's getting hot in herrrre",
-    description: '',
-    points: '1',
-  },
-  'enjoy-a-free-icecream': {
-    id: 'enjoy-a-free-icecream',
-    location: {
-      coords: [-33.86002086226806, 151.20901566894543],
-      name: 'Messina',
-    },
-    name: 'Enjoy a free ice cream',
-    description: '',
-    points: '1',
-  },
-  'shoot-for-the-stars': {
-    id: 'shoot-for-the-stars',
-    location: {
-      coords: [-33.85913200650135, 151.20479104526223],
-      name: 'Observatory Hill',
-    },
-    name: 'Shoot for the stars',
-    description: '',
-    points: '2',
-  },
-  'i-could-do-that-myself': {
-    id: 'i-could-do-that-myself',
-    location: {
-      coords: [-33.86199113923606, 151.21229407502204],
-      name: 'Museum of Contemporary Art',
-    },
-    name: 'I could do that myself',
-    description: '',
-    points: '1',
-  },
-  'thats-a-lot-of-flags': {
-    id: 'thats-a-lot-of-flags',
-    location: {
-      coords: [-33.86126950448042, 151.2135332555823],
-      name: 'Museum of Contemporary Art',
-    },
-    name: "That's a lot of flags",
-    description: '',
-    points: '1',
-  },
-  'selfie-eye-us': {
-    id: 'selfie-eye-us',
-    location: {
-      coords: [-33.86126950448042, 151.2135332555823],
-      name: 'Museum of Contemporary Art',
-    },
-    name: 'Selfie-eye-us',
-    description: '',
-    points: '1',
-  },
-  'faulty-towers': {
-    id: 'faulty-towers',
-    location: {
-      coords: [-33.86126950448042, 151.2135332555823],
-      name: 'Location TBC',
-    },
-    name: 'Faulty towers',
-    description: '',
-    points: '1',
-  },
-  'year-of-the-tiger': {
-    id: 'year-of-the-tiger',
-    location: {
-      coords: [-33.86126950448042, 151.2135332555823],
-      name: 'Location TBC',
-    },
-    name: 'Year of the Tiger',
-    description: '',
-    points: '1',
-  },
-  'smooth-criminal': {
-    id: 'smooth-criminal',
-    location: {
-      coords: [-33.86126950448042, 151.2135332555823],
+      coords: [-33.86201488638533, 151.21231129103194],
       name: 'Justice and Police Museum',
+      link: 'https://goo.gl/maps/bYTLykpcSt7gU49v8',
     },
     name: 'Smooth criminal',
-    description: '',
+    description: 'Take a team selfie with a gangster.',
     points: '1',
+    photo: justiceAndPoliceMuseum,
   },
-  'and-the-grammy-goes-to': {
-    id: 'and-the-grammy-goes-to',
+  grammy: {
+    id: 'grammy',
     location: {
-      coords: [-33.86126950448042, 151.2135332555823],
+      coords: [-33.861298860180725, 151.21364714072686],
       name: 'Memory is Creation without End',
+      link: 'https://goo.gl/maps/pSNy6EcpzDscL3V1A',
     },
     name: 'And the Grammy goes to...',
-    description: '',
+    description:
+      'Pretend you’re in a band. Pose for your new album cover and tell us the genre and band name.',
     points: '3',
+    photo: memoryIsCreationWithoutEnd,
   },
-  'susannahs-place': {
-    id: 'susannahs-place',
+  dance: {
+    id: 'dance',
     location: {
-      coords: [-33.86126950448042, 151.2135332555823],
-      name: "Susannah's Place",
+      coords: [-33.86015139708767, 151.20741046830878],
+      name: 'Susannah Place',
+      link: 'https://goo.gl/maps/VkgEyhuEGNV51M2D7',
     },
-    name: '3,2,1...',
-    description: '',
+    name: 'Bust a move',
+    description:
+      'Get ready for tonight’s dancefloor. Show us your moves by recreating this tiktok dance.',
     points: '3',
+    photo: susannahPlace,
   },
-  'steal-some-points': {
-    id: 'steal-some-points',
+  scout: {
+    id: 'scout',
+    location: {
+      coords: [-33.861757115149274, 151.21167693399258],
+      name: 'AMP forecourt',
+      link: 'https://goo.gl/maps/a8XRUj9J1BrA3PhX7',
+    },
+    name: 'Scout for',
+    description: 'TODO',
+    points: '3',
+    photo: ampForecourt,
+  },
+  /** Global */
+  steal: {
+    id: 'steal',
     name: 'Steal some points mwahahahah!',
-    description: '',
-    points: 'Many',
+    description:
+      'Take photos of other teams without them noticing, and you’ll get one of their points. Remember, it works both ways! Keep a lookout for other teams taking your photo.',
+    points: '1*',
   },
-  'take-a-selfie': {
-    id: 'take-a-selfie',
+  performer: {
+    id: 'performer',
     name: 'Take a selfie with a street performer',
-    description: '',
+    description: 'Remember to thank them with a tip! Check your kit for the $$',
     points: '1',
   },
-  photobomb: {
-    id: 'photobomb',
+  tourist: {
+    id: 'tourist',
     name: 'Photobomb a tourist pic',
-    description: '',
+    description:
+      'Leave a lasting impression in someone else’s photo. Remember to share your photographic evidence with us!',
     points: '1',
   },
-  'little-boat-big-boat': {
-    id: 'little-boat-big-boat',
-    name: 'Team selfie with a little boat, big boat',
-    description: '',
+  boat: {
+    id: 'boat',
+    name: 'Snap some seafaring vessels',
+    description: `Take two snaps:
+    1. Biggest seafaring vessel
+    2. Smallest seafaring vessel`,
     points: '2',
   },
-  'best-pic': {
-    id: 'best-pic',
-    name: 'Take the best ever scavvy hunt pic',
-    description: '',
+  creative: {
+    id: 'creative',
+    name: 'Creative photo contest',
+    description:
+      'Let your inner artist shine! Send us the most creative photo that you come up with. Best photo wins bonus points.',
     points: '2',
-  },
-  'movie-scene': {
-    id: 'movie-scene',
-    name: 'Recreate a famous movie scene',
-    description: '',
-    points: '3',
   },
 }
 
 export const locationChallenges: string[] = [
-  'shackle-up',
-  'aussie-feast',
-  'wheres-my-stuff',
-  'gimme the creeps',
-  'its-getting-hot-in-here',
-  'enjoy-a-free-icecream',
-  'shoot-for-the-stars',
-  'i-could-do-that-myself',
-  'thats-a-lot-of-flags',
-  'selfie-eye-us',
-  'faulty-towers',
-  'year-of-the-tiger',
-  'smooth-criminal',
-  'and-the-grammy-goes-to',
-  'susannahs-place',
+  'convict',
+  'tower',
+  'house',
+  'icecream',
+  'jump',
+  'dance',
+  'copycat',
+  'flags',
+  'zodiac',
+  'feast',
+  'criminal',
+  'grammy',
 ]
 
 export const anywhereChallenges: string[] = [
-  'steal-some-points',
-  'take-a-selfie',
-  'photobomb',
-  'little-boat-big-boat',
-  'best-pic',
-  'movie-scene',
+  'steal',
+  'performer',
+  'tourist',
+  'boat',
+  'creative',
 ]

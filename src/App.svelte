@@ -2,6 +2,7 @@
   import Leaflet from "leaflet";
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
+  import leftIcon from "./assets/icons/Left.svg";
   import {
     anywhereChallenges,
     challenges,
@@ -12,12 +13,12 @@
 
   const markerClass = (active = false) =>
     `!h-8 !w-8 rounded-full !flex items-center justify-center font-bold text-md shadow-md ${
-      active ? "ring-info ring-2 !z-[300]" : ""
+      active ? "ring-info ring-4 !z-[300]" : ""
     }`;
 
   const createIcon = (challenge: Challenge, active = false) =>
     Leaflet.divIcon({
-      className: `${markerClass(active)} bg-accent/75 text-accent-content`,
+      className: `${markerClass(active)} bg-accent/80 text-accent-content`,
       html: challenge.name[0],
     });
 
@@ -129,7 +130,7 @@
 
   $: getDistanceText = (challenge: Challenge) => {
     if (!currentCoord) {
-      return "-";
+      return "";
     }
 
     const distance = getDistanceFromLatLonInKm(
@@ -150,42 +151,58 @@
   <div
     class="relative {expanded
       ? 'h-[70vh]'
-      : 'h-[35vh]'} md:h-full flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-300"
+      : 'h-[35vh]'} md:h-full flex flex-col rounded-t-2xl z-[1100] bg-white shadow-md transition-[height] duration-300"
   >
     {#if selectedChallenge !== undefined}
       <div
-        class="absolute inset-0 bg-base-100 shadow-md rounded-t-2xl z-20 flex flex-col"
+        class="absolute inset-0 bg-white rounded-t-2xl z-20 flex flex-col"
         transition:fly={{ y: 600, opacity: 1 }}
       >
-        <button
-          class="text-xl px-4 pt-6 pb-3 flex w-full"
-          on:click={unfocusMarker}>&lt;</button
+        <button class="px-3 py-4 flex w-full" on:click={unfocusMarker}
+          ><img src={leftIcon} alt="Back" /></button
         >
         <div class="overflow-y-scroll px-4">
-          <h1 class="text-xl">
+          <h1 class="text-lg">
             {selectedChallenge.name}
           </h1>
-          <h2 class="underline font-bold text-sm mt-2 mb-6">
+          <h2 class="underline font-bold text-xs mt-2 mb-6">
             {#if selectedChallenge.location}
-              <a href="/" target="_blank">{selectedChallenge.location.name}</a>
+              <a
+                href={selectedChallenge.location.link}
+                target="_blank"
+                rel="noreferrer">{selectedChallenge.location.name}</a
+              >
             {:else}
               Anywhere
             {/if}
           </h2>
           <p>{selectedChallenge.description}</p>
-          <div class="mt-6 mb-3">🏆 Earn {selectedChallenge.points} point</div>
-          <div>📷 Upload the pic in your Slack channel</div>
-          <label class="flex justify-between py-2 my-4">
-            Nailed it, cross it off my list!
-            <input class="checkbox" type="checkbox" />
-          </label>
-          <div class="-mx-4">
-            <img
-              class="w-full"
-              src="https://lh5.googleusercontent.com/p/AF1QipODxgoMM_ZyWwDAf27VmY-DxkTMnx9z-47fp_ok=w203-h152-k-no"
-              alt={selectedChallenge.location.name}
-            />
+          <div class="text-sm mt-6 mb-3">
+            🏆 Earn {selectedChallenge.points} point
           </div>
+          <div class="text-sm">📷 Upload proof to your Slack channel</div>
+          {#if selectedChallenge.location}
+            <a
+              href={selectedChallenge.location.link}
+              target="_blank"
+              rel="noreferrer"
+              class="bg-accent text-accent-content rounded-full p-4 text-md font-bold my-6 w-full block text-center"
+              >Get directions</a
+            >
+          {/if}
+          <label class="text-sm flex justify-between items-center mt-6 mb-10">
+            Nailed it, cross it off my list!
+            <input class="toggle toggle-secondary toggle-lg" type="checkbox" />
+          </label>
+          {#if selectedChallenge.photo}
+            <div class="overflow-hidden rounded-lg pb-4">
+              <img
+                class="w-full"
+                src={selectedChallenge.photo}
+                alt={selectedChallenge.location.name}
+              />
+            </div>
+          {/if}
         </div>
       </div>
     {/if}
@@ -196,7 +213,7 @@
       <span>Team challenges</span>
       <span class="transition {expanded ? 'rotate-0' : 'rotate-180'}">V</span>
     </button>
-    <div class="flex shadow-lg">
+    <div class="flex shadow-md">
       <button
         class="text-xs transition p-2 flex-1 {tab === 'specific'
           ? 'border-accent font-bold'
