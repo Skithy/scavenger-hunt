@@ -1,3 +1,16 @@
+@font-face {
+  font-family: 'Soehne';
+  src: url('/fonts/soehne-web-buch.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Soehne';
+  src: url('/fonts/soehne-web-kraftig.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,4 +19,7 @@ html,
 body,
 #app {
   height: 100%;
+  font-family: Soehne, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

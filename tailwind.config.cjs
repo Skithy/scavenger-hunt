@@ -2,7 +2,9 @@
 module.exports = {
   content: ['./index.html', './src/**/*.svelte'],
   theme: {
-    extend: {},
+    fontWeight: {
+      bold: 500,
+    },
   },
   daisyui: {
     themes: [
