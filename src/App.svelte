@@ -162,11 +162,11 @@
   <div
     class="relative {expanded
       ? 'h-[70vh]'
-      : 'h-[35vh]'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-white shadow-md transition-[height] duration-300"
+      : 'h-[35vh]'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-300"
   >
     {#if selectedChallenge !== undefined}
       <div
-        class="absolute inset-0 bg-white rounded-t-2xl z-20 flex flex-col"
+        class="absolute inset-0 bg-base-100 rounded-t-2xl z-20 flex flex-col"
         transition:fly={{ y: 1000, opacity: 1 }}
       >
         <button class="px-3 py-4 flex w-full" on:click={unfocusMarker}
@@ -187,7 +187,7 @@
               Anywhere
             {/if}
           </h2>
-          <p class="prose">
+          <p class="prose text-base-content">
             {@html marked(selectedChallenge.description, { renderer })}
           </p>
           <div class="text-sm mt-6 mb-3">
@@ -224,7 +224,9 @@
       on:click={() => toggleExpanded()}
     >
       <span>Team challenges</span>
-      <span class="transition {expanded ? 'rotate-0' : 'rotate-180'}">V</span>
+      <span class="transition md:hidden {expanded ? 'rotate-0' : 'rotate-180'}"
+        >V</span
+      >
     </button>
     <div class="flex shadow-md">
       <button
@@ -236,7 +238,7 @@
       <button
         class="text-xs transition p-2 flex-1 {tab === 'anywhere'
           ? 'border-accent font-bold'
-          : 'border-base-300'} border-b-2"
+          : 'border-base-200'} border-b-2"
         on:click={() => (tab = "anywhere")}>Do anywhere</button
       >
     </div>
@@ -246,7 +248,7 @@
           {#each locationChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
-                class="grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 border-b-2 border-base-300 p-4 text-left"
+                class="grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 border-b-2 border-base-200 p-4 text-left"
                 on:click={() => focusMarker(challenge.id, true)}
               >
                 <div>📌</div>
@@ -267,7 +269,7 @@
           {#each anywhereChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
-                class="block border-b-2 border-base-300 p-4 text-left"
+                class="block border-b-2 border-base-200 p-4 text-left"
                 on:click={() => focusMarker(challenge.id, true)}
               >
                 <div>
