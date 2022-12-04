@@ -52,7 +52,7 @@
     `${markerClass(active)} bg-accent text-accent-content`;
   const unlockedIcon = (challenge: Challenge, active = false) =>
     Leaflet.divIcon({
-      className: `opacity-80 ${unlockedClass(active)}`,
+      className: `opacity-90 ${unlockedClass(active)}`,
       html: challenge.name[0],
     });
 
@@ -64,7 +64,7 @@
     `${markerClass(active)} bg-secondary text-secondary-content`;
   const lockedIcon = (challenge: Challenge, active = false) =>
     Leaflet.divIcon({
-      className: `opacity-60 ${lockedClass(active)}`,
+      className: `opacity-90 ${lockedClass(active)}`,
       html: challenge.name[0],
     });
 
@@ -72,7 +72,7 @@
     `${markerClass(active)} bg-success text-success-content`;
   const doneIcon = (active = false) =>
     Leaflet.divIcon({
-      className: `opacity-70 ${doneClass(active)}`,
+      className: `opacity-90 ${doneClass(active)}`,
       html: `<img src=${tickIcon} alt="Done" />`,
     });
 
@@ -352,7 +352,7 @@
                   <div>
                     {#if markerStates[challenge.id] === "locked"}
                       <div class={lockedClass()}>
-                        <img src={lockIcon} alt="Locked" />
+                        {challenge.name[0]}
                       </div>
                     {:else if markerStates[challenge.id] === "unlocked"}
                       <div class={unlockedClass()}>
