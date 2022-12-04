@@ -243,7 +243,7 @@
         >
         <div class="overflow-y-scroll px-4">
           <h1 class="text-lg {selectedState === 'done' ? 'line-through' : ''}">
-            {selectedChallenge.name}
+            {selectedState === "locked" ? "Unlock me" : selectedChallenge.name}
           </h1>
           <h2
             class="{selectedChallenge.location
@@ -261,7 +261,9 @@
             {/if}
           </h2>
           <p class="prose text-base-content">
-            {@html marked(selectedChallenge.description, { renderer })}
+            {@html selectedState === "locked"
+              ? `Move closer to ${selectedChallenge.location.name} to unlock the challenge details.`
+              : marked(selectedChallenge.description, { renderer })}
           </p>
           <div class="text-sm mt-6 mb-3">
             🏆 Earn {selectedChallenge.points} point
