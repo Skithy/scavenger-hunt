@@ -210,14 +210,17 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
   steal: {
     id: 'steal',
     name: 'Steal some points mwahahahah!',
-    description:
-      'Take photos of other teams without them noticing, and you’ll get one of their points. Remember, it works both ways! Keep a lookout for other teams taking your photo.',
+    description: `
+Take photos of other teams without them noticing, and you’ll get one of their points.
+
+Remember, it works both ways! Keep a lookout for other teams taking your photo.`,
     points: '1*',
   },
   performer: {
     id: 'performer',
     name: 'Take a selfie with a street performer',
-    description: 'Remember to thank them with a tip! Check your kit for the $$',
+    description:
+      'Remember to thank them with a tip! Check your kit for the $$.',
     points: '1',
   },
   tourist: {
@@ -230,9 +233,10 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
   boat: {
     id: 'boat',
     name: 'Snap some seafaring vessels',
-    description: `Take two snaps:
-    1. Biggest seafaring vessel
-    2. Smallest seafaring vessel`,
+    description: `
+Take two snaps:
+1. Biggest seafaring vessel
+2. Smallest seafaring vessel`,
     points: '2',
   },
   creative: {
