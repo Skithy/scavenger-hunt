@@ -127,7 +127,15 @@
         [-33.85, 151.19972638009483],
         [-33.868, 151.218],
       ],
-    }).setView([-33.85803526895217, 151.20859419563487], 16);
+    })
+      .setView([-33.85803526895217, 151.20859419563487], 16)
+      .on("click", () => {
+        unfocusMarker();
+        toggleExpanded(false);
+      })
+      .on("dblclick", () => {
+        // TODO: remove
+      });
     Leaflet.tileLayer(
       "https://{s}.tile.jawg.io/jawg-sunny/{z}/{x}/{y}{r}.png?access-token=GZQzSfPKg5ysveVGL3cr0No9YYGhlNkbxtpqF8nyQu4qWnSXj83kZpwnzG73lVmF",
       {
@@ -174,6 +182,7 @@
   function getLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition((position) => {
+        // TODO: uncomment
         // posMarker.setLatLng([
         //   position.coords.latitude,
         //   position.coords.longitude,
@@ -278,16 +287,17 @@
               >Get directions</a
             >
           {/if}
-          <label class="text-sm flex justify-between items-center mt-6 mb-10">
-            Nailed it, cross it off my list!
-            <input
-              on:change={() => markChallenge(selectedChallenge)}
-              checked={selectedState === "done"}
-              disabled={selectedState === "locked"}
-              class="toggle toggle-secondary toggle-lg"
-              type="checkbox"
-            />
-          </label>
+          {#if selectedState !== "locked"}
+            <label class="text-sm flex justify-between items-center mt-6 mb-10">
+              Nailed it, cross it off my list!
+              <input
+                on:change={() => markChallenge(selectedChallenge)}
+                checked={selectedState === "done"}
+                class="toggle toggle-secondary toggle-lg"
+                type="checkbox"
+              />
+            </label>
+          {/if}
           {#if selectedChallenge.photo}
             <div class="overflow-hidden rounded-lg pb-4">
               <img
@@ -359,11 +369,7 @@
                       ? "line-through"
                       : ""}
                   >
-                    {#if markerStates[challenge.id] === "locked"}
-                      Unlock me
-                    {:else}
-                      {challenge.name}
-                    {/if}
+                    {challenge.name}
                   </div>
                   <div class="text-xs text-center">
                     {getDistanceText(challenge)}
