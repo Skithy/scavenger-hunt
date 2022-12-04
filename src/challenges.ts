@@ -34,7 +34,7 @@ export const challenges: Record<string, Challenge> = {
       name: 'The Rocks Market',
       link: 'https://goo.gl/maps/FVpLztKbFBBJBgZA8',
     },
-    name: 'Shackle up!',
+    name: 'Early settlers',
     description:
       'Find the sandy trio and show us your best impression of a weary convict.',
     points: '1',
@@ -62,7 +62,7 @@ export const challenges: Record<string, Challenge> = {
     },
     name: 'House call',
     description: `
-Two tasks:
+Three tasks:
 1. What items are on the dresser?
 2. Take a photo of the creepiest room you can find. Creepiest photo gets bonus points.
 3. Take a team photo by the fire.`,
@@ -76,7 +76,7 @@ Two tasks:
       name: 'Messina',
       link: 'https://goo.gl/maps/qUxEdetmivejGz1G8',
     },
-    name: 'Enjoy a free ice cream',
+    name: 'Grab a free icecream!',
     description:
       'The hardest challenge of all. Enjoy a free single scoop icecream on us!',
     points: '1',
@@ -142,9 +142,9 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
       name: 'First Fleet Park',
       link: 'https://goo.gl/maps/Ep13PDQRuGWe4PXc7',
     },
-    name: 'Feast on Aussie icons',
+    name: 'Tastes like Australia',
     description:
-      'Savour one of our tasty, well-loved Aussie icons to score a point!',
+      'Enjoy a well-loved Aussie favourite for your arvo snack. They’re small in size but pack a punch.',
     points: '1',
     photo: firstFleetPark,
   },
@@ -155,7 +155,7 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
       name: 'Justice and Police Museum',
       link: 'https://goo.gl/maps/bYTLykpcSt7gU49v8',
     },
-    name: 'Smooth criminal',
+    name: `It's mug shot time`,
     description: 'Take a team selfie with a gangster.',
     points: '1',
     photo: justiceAndPoliceMuseum,
@@ -180,7 +180,7 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
       name: 'Susannah Place',
       link: 'https://goo.gl/maps/VkgEyhuEGNV51M2D7',
     },
-    name: 'Bust a move',
+    name: 'Dance battle',
     description:
       'Get ready for tonight’s dancefloor. Show us your moves by recreating this [tiktok dance](https://www.tiktok.com/@junpei.zaki/video/7172858706902650114).',
     points: '3',
@@ -190,11 +190,12 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
     id: 'scout',
     location: {
       coords: [-33.861757115149274, 151.21167693399258],
-      name: 'AMP forecourt',
-      link: 'https://goo.gl/maps/a8XRUj9J1BrA3PhX7',
+      name: 'Alfred St',
+      link: 'https://goo.gl/maps/Wpy7Mj2tvKu6EuMu8',
     },
-    name: 'Scout for',
-    description: 'TODO',
+    name: `Blowin’ in the wind`,
+    description:
+      'Beneath the compass, lies a pyramid. In which direction will it be found?',
     points: '3',
     photo: ampForecourt,
   },

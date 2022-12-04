@@ -311,13 +311,13 @@
     </button>
     <div class="flex shadow-md">
       <button
-        class="text-xs transition p-2 flex-1 {tab === 'specific'
+        class="text-sm transition p-2 flex-1 {tab === 'specific'
           ? 'border-accent font-bold'
           : 'border-base-300'} border-b-2 active:bg-base-200"
         on:click={() => (tab = "specific")}>Specific locations</button
       >
       <button
-        class="text-xs transition p-2 flex-1 {tab === 'anywhere'
+        class="text-sm transition p-2 flex-1 {tab === 'anywhere'
           ? 'border-accent font-bold'
           : 'border-base-300'} border-b-2 active:bg-base-200"
         on:click={() => (tab = "anywhere")}>Do anywhere</button
