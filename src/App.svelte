@@ -42,7 +42,7 @@
       case "done":
         return doneIcon(active);
       case "locked":
-        return lockedIcon(active);
+        return lockedIcon(challenge, active);
       case "unlocked":
         return unlockedIcon(challenge, active);
     }
@@ -61,11 +61,11 @@
   });
 
   const lockedClass = (active = false) =>
-    `${markerClass(active)} bg-secondary text-accent-content`;
-  const lockedIcon = (active = false) =>
+    `${markerClass(active)} bg-secondary text-secondary-content`;
+  const lockedIcon = (challenge: Challenge, active = false) =>
     Leaflet.divIcon({
-      className: `opacity-80 ${lockedClass(active)}`,
-      html: `<img src=${lockIcon} alt="Locked" />`,
+      className: `opacity-60 ${lockedClass(active)}`,
+      html: challenge.name[0],
     });
 
   const doneClass = (active = false) =>

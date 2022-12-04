@@ -48,9 +48,14 @@ export const challenges: Record<string, Challenge> = {
       link: 'https://goo.gl/maps/XQ4B4bVstaUZZFb39',
     },
     name: 'Faulty towers',
-    description:
-      'Build a spaghetti tower in 2 minutes. Highest tower wins bonus points.',
-    points: '1',
+    description: `
+Build a spaghetti tower in 5 minutes.
+      
+Earn extra points each if your tower:
+- stands up for at least 10 seconds
+- is at least 3 spaghettis tall
+- is the highest tower`,
+    points: 'up to 4',
     photo: blighBarneyReserve,
   },
   house: {
@@ -66,7 +71,7 @@ Three tasks:
 1. What items are on the dresser?
 2. Take a photo of the creepiest room you can find. Creepiest photo gets bonus points.
 3. Take a team photo by the fire.`,
-    points: '1',
+    points: '2',
     photo: foundationPark,
   },
   icecream: {
@@ -143,8 +148,7 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
       link: 'https://goo.gl/maps/Ep13PDQRuGWe4PXc7',
     },
     name: 'Tastes like Australia',
-    description:
-      'Enjoy a well-loved Aussie favourite for your arvo snack. They’re small in size but pack a punch.',
+    description: `Enjoy a well-loved Aussie favourite for your arvo snack. They’re small in size but pack a punch.`,
     points: '1',
     photo: firstFleetPark,
   },
