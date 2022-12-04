@@ -2,6 +2,7 @@
   import Leaflet from "leaflet";
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
+  import * as easingFns from "svelte/easing";
   import { marked, Renderer } from "marked";
   import { sortBy } from "lodash";
   import lockIcon from "./assets/icons/lock.svg";
@@ -277,101 +278,6 @@
       ? 'h-[70vh]'
       : 'h-16'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-200 overflow-hidden"
   >
-    {#if selectedChallenge !== undefined}
-      <div
-        class="fixed bottom-0 left-0 right-0 h-[70vh] bg-base-100 rounded-t-2xl z-20 flex flex-col"
-        transition:fly={{ y: 1000, opacity: 1, duration: 200 }}
-      >
-        <button
-          class="px-3 py-4 flex w-full transition active:bg-base-200"
-          on:click={unfocusMarker}><img src={leftIcon} alt="Back" /></button
-        >
-        <div class="overflow-y-scroll px-4">
-          <h1
-            class="text-lg flex items-center gap-x-2 {selectedState === 'done'
-              ? 'line-through'
-              : ''}"
-          >
-            {selectedChallenge.name}
-            {#if selectedState === "locked"}
-              <img src={lockIcon} alt="locked" />
-            {/if}
-          </h1>
-          <h2 class="text-xs mt-2 mb-6">
-            {#if selectedChallenge.location}
-              <a
-                href={selectedChallenge.location.link}
-                target="_blank"
-                class="underline font-bold"
-                rel="noreferrer">{selectedChallenge.location.name}</a
-              >
-            {:else}
-              Anywhere
-            {/if}
-          </h2>
-          <div class="prose text-base-content">
-            {#if selectedState === "locked"}
-              <p>This is a locked challenge.</p>
-              <p>
-                Move closer to {selectedChallenge.location.name} to unlock the challenge
-                details.
-              </p>
-            {:else}
-              {@html marked(selectedChallenge.description, { renderer })}
-            {/if}
-          </div>
-          <ul class="text-sm mt-6 flex flex-col gap-y-3">
-            <li class="flex gap-x-2">
-              <img src={cupIcon} alt="Points" />
-              <span>
-                Earn {selectedChallenge.points} point
-              </span>
-            </li>
-            <li class="flex gap-x-2">
-              <img src={cameraIcon} alt="Proof" />
-              <span>Upload proof to your Slack channel</span>
-            </li>
-            {#if selectedChallenge.timeLocked}
-              <li class="flex gap-x-2">
-                <img src={clockIcon} alt="Time limit" />
-                <span>Activity closes at <b>5.15pm</b></span>
-              </li>
-            {/if}
-          </ul>
-
-          <div class="text-sm" />
-          {#if selectedChallenge.location}
-            <a
-              href={selectedChallenge.location.link}
-              target="_blank"
-              rel="noreferrer"
-              class="bg-accent text-accent-content rounded-full p-4 text-md font-bold my-6 w-full block text-center"
-              >Get directions</a
-            >
-          {/if}
-          {#if selectedState !== "locked"}
-            <label class="text-sm flex justify-between items-center mt-6 mb-10">
-              Nailed it, cross it off my list!
-              <input
-                on:change={() => markChallenge(selectedChallenge)}
-                checked={selectedState === "done"}
-                class="toggle toggle-secondary toggle-lg"
-                type="checkbox"
-              />
-            </label>
-          {/if}
-          {#if selectedChallenge.photo}
-            <div class="overflow-hidden rounded-lg pb-4">
-              <img
-                class="w-full"
-                src={selectedChallenge.photo}
-                alt={selectedChallenge.location.name}
-              />
-            </div>
-          {/if}
-        </div>
-      </div>
-    {/if}
     <button
       class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200 md:active:bg-base-100 md:cursor-default"
       on:click={() => toggleExpanded()}
@@ -480,4 +386,110 @@
       </ul>
     </div>
   </div>
+  {#if selectedChallenge !== undefined}
+    <div
+      class="fixed bottom-0 left-0 right-0 h-[70vh] bg-base-100 rounded-t-2xl z-[9999] flex flex-col"
+      in:fly={{
+        y: 1000,
+        opacity: 1,
+        duration: 200,
+        easing: easingFns.cubicOut,
+      }}
+      out:fly={{
+        y: 1000,
+        opacity: 1,
+        duration: 400,
+        easing: easingFns.cubicIn,
+      }}
+    >
+      <button
+        class="px-3 py-4 flex w-full transition active:bg-base-200"
+        on:click={unfocusMarker}><img src={leftIcon} alt="Back" /></button
+      >
+      <div class="overflow-y-scroll px-4">
+        <h1
+          class="text-lg flex items-center gap-x-2 {selectedState === 'done'
+            ? 'line-through'
+            : ''}"
+        >
+          {selectedChallenge.name}
+          {#if selectedState === "locked"}
+            <img src={lockIcon} alt="locked" />
+          {/if}
+        </h1>
+        <h2 class="text-xs mt-2 mb-6">
+          {#if selectedChallenge.location}
+            <a
+              href={selectedChallenge.location.link}
+              target="_blank"
+              class="underline font-bold"
+              rel="noreferrer">{selectedChallenge.location.name}</a
+            >
+          {:else}
+            Anywhere
+          {/if}
+        </h2>
+        <div class="prose text-base-content">
+          {#if selectedState === "locked"}
+            <p>This is a locked challenge.</p>
+            <p>
+              Move closer to {selectedChallenge.location.name} to unlock the challenge
+              details.
+            </p>
+          {:else}
+            {@html marked(selectedChallenge.description, { renderer })}
+          {/if}
+        </div>
+        <ul class="text-sm mt-6 flex flex-col gap-y-3">
+          <li class="flex gap-x-2">
+            <img src={cupIcon} alt="Points" />
+            <span>
+              Earn {selectedChallenge.points} point
+            </span>
+          </li>
+          <li class="flex gap-x-2">
+            <img src={cameraIcon} alt="Proof" />
+            <span>Upload proof to your Slack channel</span>
+          </li>
+          {#if selectedChallenge.timeLocked}
+            <li class="flex gap-x-2">
+              <img src={clockIcon} alt="Time limit" />
+              <span>Activity closes at <b>5.15pm</b></span>
+            </li>
+          {/if}
+        </ul>
+
+        <div class="text-sm" />
+        {#if selectedChallenge.location}
+          <a
+            href={selectedChallenge.location.link}
+            target="_blank"
+            rel="noreferrer"
+            class="bg-accent text-accent-content rounded-full p-4 text-md font-bold my-6 w-full block text-center"
+            >Get directions</a
+          >
+        {/if}
+        {#if selectedState !== "locked"}
+          <label class="text-sm flex justify-between items-center mt-6 mb-10">
+            Nailed it, cross it off my list!
+            <input
+              on:change={() => markChallenge(selectedChallenge)}
+              checked={selectedState === "done"}
+              class="toggle toggle-secondary toggle-lg"
+              type="checkbox"
+            />
+          </label>
+        {/if}
+        {#if selectedChallenge.photo}
+          <div class="overflow-hidden rounded-lg pb-4">
+            <img
+              class="w-full"
+              src={selectedChallenge.photo}
+              alt={selectedChallenge.location.name}
+            />
+          </div>
+        {/if}
+      </div>
+    </div>
+  {/if}
 </main>
