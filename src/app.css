@@ -24,3 +24,8 @@ body,
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: contain;
 }
+
+.leaflet-marker-icon {
+  font-family: Soehne, system-ui, sans-serif;
+  font-size: 16px;
+}

@@ -3,7 +3,9 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
   import { marked, Renderer } from "marked";
-  import leftIcon from "./assets/icons/Left.svg";
+  import lockIcon from "./assets/icons/lock.svg";
+  import tickIcon from "./assets/icons/tick.svg";
+  import leftIcon from "./assets/icons/left.svg";
   import {
     anywhereChallenges,
     challenges,
@@ -12,14 +14,43 @@
   } from "./challenges";
   import { getDistanceFromLatLonInKm, type Coord } from "./getDistance";
 
+  type State = "locked" | "unlocked" | "done";
+  const markerStates: Record<string, State> = Object.entries(challenges).reduce(
+    (total, [id, challenge]) => {
+      total[id] = challenge.location ? "locked" : "unlocked";
+      return total;
+    },
+    {}
+  );
+
+  const markerDistances: Record<string, number> = Object.keys(
+    challenges
+  ).reduce((total, id) => {
+    total[id] = 0;
+    return total;
+  }, {});
+
   const markerClass = (active = false) =>
-    `!h-8 !w-8 rounded-full !flex items-center justify-center font-bold text-md shadow-md ${
+    `!h-8 !w-8 rounded-full !flex items-center justify-center !font-bold !text-md shadow-md ${
       active ? "ring-info ring-4 !z-[300]" : ""
     }`;
 
-  const createIcon = (challenge: Challenge, active = false) =>
+  const createIcon = (challenge: Challenge, active = false) => {
+    switch (markerStates[challenge.id]) {
+      case "done":
+        return doneIcon(active);
+      case "locked":
+        return lockedIcon(active);
+      case "unlocked":
+        return unlockedIcon(challenge, active);
+    }
+  };
+
+  const unlockedClass = (active = false) =>
+    `${markerClass(active)} bg-accent text-accent-content`;
+  const unlockedIcon = (challenge: Challenge, active = false) =>
     Leaflet.divIcon({
-      className: `${markerClass(active)} bg-accent/80 text-accent-content`,
+      className: `opacity-80 ${unlockedClass(active)}`,
       html: challenge.name[0],
     });
 
@@ -27,16 +58,20 @@
     className: "bg-info !h-4 !w-4 rounded-full shadow-md border-2 border-white",
   });
 
+  const lockedClass = (active = false) =>
+    `${markerClass(active)} bg-secondary text-accent-content`;
   const lockedIcon = (active = false) =>
     Leaflet.divIcon({
-      className: `${markerClass(active)} bg-secondary/75 text-accent-content`,
-      html: "🔒",
+      className: `opacity-80 ${lockedClass(active)}`,
+      html: `<img src=${lockIcon} alt="Locked" />`,
     });
 
+  const doneClass = (active = false) =>
+    `${markerClass(active)} bg-success text-success-content`;
   const doneIcon = (active = false) =>
     Leaflet.divIcon({
-      className: `${markerClass(active)} bg-success/75 text-success-content`,
-      html: "✔️",
+      className: `opacity-70 ${doneClass(active)}`,
+      html: `<img src=${tickIcon} alt="Done" />`,
     });
 
   let selectedId: string | undefined;
@@ -113,13 +148,13 @@
     }
   }
 
-  async function focusMarker(id: string, zoom?: boolean) {
+  async function focusMarker(id: string) {
     unfocusMarker();
     selectedId = id;
     await toggleExpanded(true);
     const marker = markers[id];
     if (marker) {
-      map.flyTo(marker.getLatLng(), zoom ? 17 : undefined);
+      map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 17));
       marker.setIcon(createIcon(challenges[id], true));
     }
   }
@@ -133,21 +168,42 @@
         // ]);
         currentCoord = [-33.85803526895217, 151.20859419563487];
         posMarker.setLatLng(currentCoord);
+
+        Object.entries(challenges).forEach(([id, challenge]) => {
+          if (challenge.location) {
+            markerDistances[id] = getDistanceFromLatLonInKm(
+              challenge.location.coords,
+              currentCoord
+            );
+            if (markerStates[id] === "locked" && markerDistances[id] < 0.1) {
+              markerStates[id] = "unlocked";
+              markers[id].setIcon(createIcon(challenge));
+            }
+          }
+        });
       });
     } else {
       alert("geolocation is not supported");
     }
   }
 
-  $: getDistanceText = (challenge: Challenge) => {
-    if (!currentCoord) {
-      return "";
+  function markChallenge(challenge: Challenge) {
+    if (markerStates[challenge.id] === "done") {
+      markerStates[challenge.id] = "unlocked";
+    } else {
+      markerStates[challenge.id] = "done";
     }
 
-    const distance = getDistanceFromLatLonInKm(
-      challenge.location.coords,
-      currentCoord
-    );
+    console.log(markerStates[challenge.id]);
+    markers[challenge.id].setIcon(createIcon(challenge, true));
+  }
+
+  $: getDistanceText = (challenge: Challenge) => {
+    const distance = markerDistances[challenge.id];
+
+    if (!distance) {
+      return "";
+    }
 
     if (distance > 1) {
       return `${distance.toFixed(1)}km`;
@@ -173,7 +229,11 @@
           ><img src={leftIcon} alt="Back" /></button
         >
         <div class="overflow-y-scroll px-4">
-          <h1 class="text-lg">
+          <h1
+            class="text-lg {markerStates[selectedChallenge.id] === 'done'
+              ? 'line-through'
+              : ''}"
+          >
             {selectedChallenge.name}
           </h1>
           <h2 class="underline font-bold text-xs mt-2 mb-6">
@@ -205,7 +265,13 @@
           {/if}
           <label class="text-sm flex justify-between items-center mt-6 mb-10">
             Nailed it, cross it off my list!
-            <input class="toggle toggle-secondary toggle-lg" type="checkbox" />
+            <input
+              on:change={() => markChallenge(selectedChallenge)}
+              checked={markerStates[selectedChallenge.id] === "done"}
+              disabled={markerStates[selectedChallenge.id] === "locked"}
+              class="toggle toggle-secondary toggle-lg"
+              type="checkbox"
+            />
           </label>
           {#if selectedChallenge.photo}
             <div class="overflow-hidden rounded-lg pb-4">
@@ -248,19 +314,51 @@
           {#each locationChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
-                class="grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 border-b-2 border-base-300 p-4 text-left active:bg-base-200"
-                on:click={() => focusMarker(challenge.id, true)}
+                class="border-b-2 border-base-300 active:bg-base-200 "
+                on:click={() => focusMarker(challenge.id)}
               >
-                <div>📌</div>
-                <div>{challenge.name}</div>
-                <div class="text-xs">
-                  {getDistanceText(challenge)}
-                </div>
-                <div class="text-xs">
-                  {challenge.location.name}
-                  <span class="ml-2">
-                    🏆 {challenge.points}
-                  </span>
+                <div
+                  class="transition grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 p-4 text-left {markerStates[
+                    challenge.id
+                  ] === 'locked'
+                    ? 'opacity-60'
+                    : 'opacity-100'}"
+                >
+                  <div>
+                    {#if markerStates[challenge.id] === "locked"}
+                      <div class={lockedClass()}>
+                        <img src={lockIcon} alt="Locked" />
+                      </div>
+                    {:else if markerStates[challenge.id] === "unlocked"}
+                      <div class={unlockedClass()}>
+                        {challenge.name[0]}
+                      </div>
+                    {:else}
+                      <div class={doneClass()}>
+                        <img src={tickIcon} alt="Done" />
+                      </div>
+                    {/if}
+                  </div>
+                  <div
+                    class={markerStates[challenge.id] === "done"
+                      ? "line-through"
+                      : ""}
+                  >
+                    {#if markerStates[challenge.id] === "locked"}
+                      Unlock me
+                    {:else}
+                      {challenge.name}
+                    {/if}
+                  </div>
+                  <div class="text-xs text-center">
+                    {getDistanceText(challenge)}
+                  </div>
+                  <div class="text-xs">
+                    {challenge.location.name}
+                    <span class="ml-2">
+                      🏆 {challenge.points}
+                    </span>
+                  </div>
                 </div>
               </button>
             </li>
@@ -270,9 +368,13 @@
             <li class="contents">
               <button
                 class="block border-b-2 border-base-300 p-4 text-left active:bg-base-200"
-                on:click={() => focusMarker(challenge.id, true)}
+                on:click={() => focusMarker(challenge.id)}
               >
-                <div>
+                <div
+                  class={markerStates[challenge.id] === "done"
+                    ? "line-through"
+                    : ""}
+                >
                   {challenge.name}
                 </div>
                 <div class="text-xs mt-1">
