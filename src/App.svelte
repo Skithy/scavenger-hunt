@@ -19,7 +19,7 @@
   } from "./challenges";
   import { getDistanceFromLatLonInKm, type Coord } from "./getDistance";
 
-  const DEBUG = true;
+  const DEBUG = false;
 
   type State = "locked" | "unlocked" | "done";
   const markerStates: Record<string, State> = Object.entries(challenges).reduce(
@@ -137,10 +137,8 @@
       .on("click", () => {
         unfocusMarker();
         toggleExpanded(false);
-      })
-      .on("dblclick", () => {
-        // TODO: remove
       });
+
     Leaflet.tileLayer(
       "https://{s}.tile.jawg.io/jawg-sunny/{z}/{x}/{y}{r}.png?access-token=GZQzSfPKg5ysveVGL3cr0No9YYGhlNkbxtpqF8nyQu4qWnSXj83kZpwnzG73lVmF",
       {
@@ -153,6 +151,34 @@
     posMarker.addTo(map);
     Object.values(markers).forEach((marker) => marker?.addTo(map));
   });
+
+  function notifyChallenge(challenge: Challenge) {
+    if (!("Notification" in window)) {
+      // Check if the browser supports notifications
+      alert("This browser does not support desktop notification");
+    } else if (Notification.permission === "granted") {
+      // Check whether notification permissions have already been granted;
+      // if so, create a notification
+      const notification = new Notification(
+        `Challenge [${challenge.name}] has been unlocked!`
+      );
+      // …
+    } else if (Notification.permission !== "denied") {
+      // We need to ask the user for permission
+      Notification.requestPermission().then((permission) => {
+        // If the user accepts, let's create a notification
+        if (permission === "granted") {
+          const notification = new Notification(
+            `Challenge [${challenge.name}] has been unlocked!`
+          );
+          // …
+        }
+      });
+    }
+
+    // At last, if the user has denied notifications, and you
+    // want to be respectful there is no need to bother them anymore.
+  }
 
   function toggleExpanded(newState = !expanded) {
     if (expanded !== newState) {
@@ -212,6 +238,7 @@
         if (markerStates[id] === "locked" && markerDistances[id] < 0.1) {
           markerStates[id] = "unlocked";
           markers[id].setIcon(createIcon(challenge));
+          notifyChallenge(challenge);
         }
       }
     });
