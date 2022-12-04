@@ -2,32 +2,58 @@
   import Leaflet from "leaflet";
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import { anywhereChallenges, challenges } from "./challenges";
+  import {
+    anywhereChallenges,
+    challenges,
+    locationChallenges,
+    type Challenge,
+  } from "./challenges";
 
-  const createIcon = (content: string, active = false) =>
+  const markerClass = (active = false) =>
+    `!h-8 !w-8 rounded-full !flex items-center justify-center font-bold text-md shadow-md ${
+      active ? "ring-info ring-2 !z-[300]" : ""
+    }`;
+
+  const createIcon = (challenge: Challenge, active = false) =>
     Leaflet.divIcon({
-      className: `bg-accent/75 text-accent-content border-4 ${
-        active ? "border-primary !z-[300]" : "border-accent"
-      } !h-10 !w-10 rounded-full !flex items-center justify-center text-xl`,
-      shadowSize: [20, 30], // size of the shadow
-      iconAnchor: [20, 40],
-      shadowAnchor: [4, 30], // the same for the shadow
-      popupAnchor: [0, -30],
-      html: content,
+      className: `${markerClass(active)} bg-accent/75 text-accent-content`,
+      html: challenge.name[0],
     });
 
   const hereIcon = Leaflet.divIcon({
-    className: "bg-primary !h-6 !w-6 rounded-full",
-    shadowSize: [20, 30], // size of the shadow
-    iconAnchor: [20, 40],
-    shadowAnchor: [4, 30], // the same for the shadow
-    popupAnchor: [0, -30],
+    className: "bg-info !h-4 !w-4 rounded-full shadow-md border-2 border-white",
   });
 
-  let selectedIndex: number | undefined;
-  $: selectedChallenge = challenges[selectedIndex];
-  let posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon });
-  let markers: Leaflet.Marker[] = [];
+  const lockedIcon = (active = false) =>
+    Leaflet.divIcon({
+      className: `${markerClass(active)} bg-secondary/75 text-accent-content`,
+      html: "🔒",
+    });
+
+  const doneIcon = (active = false) =>
+    Leaflet.divIcon({
+      className: `${markerClass(active)} bg-success/75 text-success-content`,
+      html: "✔️",
+    });
+
+  let selectedId: string | undefined;
+  $: selectedChallenge = challenges[selectedId];
+
+  const posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon });
+  const markers: Record<string, Leaflet.Marker | undefined> = Object.entries(
+    challenges
+  ).reduce((total, [id, challenge]) => {
+    if (challenge.location) {
+      const marker = Leaflet.marker(challenge.location.coords, {
+        icon: createIcon(challenge),
+      }).on("click", () => {
+        focusMarker(id);
+      });
+      total[id] = marker;
+    }
+    return total;
+  }, {});
+
   let map: Leaflet.Map;
   let expanded = false;
   let tab: "specific" | "anywhere" = "specific";
@@ -47,20 +73,9 @@
       }
     ).addTo(map);
 
-    challenges.forEach((data, index) => {
-      if (data.location) {
-        const marker = Leaflet.marker(data.location.coords, {
-          icon: createIcon((index + 1).toString()),
-        }).addTo(map);
-        marker.on("click", () => {
-          focusMarker(index);
-        });
-        markers.push(marker);
-      }
-    });
-
     getLocation();
     posMarker.addTo(map);
+    Object.values(markers).forEach((marker) => marker?.addTo(map));
   });
 
   function toggleExpanded(newState = !expanded) {
@@ -76,33 +91,32 @@
   }
 
   function unfocusMarker() {
-    if (selectedIndex !== undefined) {
-      if (selectedIndex < markers.length) {
-        markers[selectedIndex].setIcon(
-          createIcon((selectedIndex + 1).toString(), false)
-        );
-      }
-      selectedIndex = undefined;
+    if (selectedId) {
+      markers[selectedId]?.setIcon(createIcon(challenges[selectedId], false));
+      selectedId = undefined;
     }
   }
 
-  async function focusMarker(index: number, zoom?: boolean) {
+  async function focusMarker(id: string, zoom?: boolean) {
     unfocusMarker();
-    selectedIndex = index;
+    selectedId = id;
     await toggleExpanded(true);
-    if (index < markers.length) {
-      map.flyTo(markers[index].getLatLng(), zoom ? 17 : undefined);
-      markers[index].setIcon(createIcon((index + 1).toString(), true));
+    const marker = markers[id];
+    if (marker) {
+      map.flyTo(marker.getLatLng(), zoom ? 17 : undefined);
+      marker.setIcon(createIcon(challenges[id], true));
     }
   }
 
   function getLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition((position) => {
-        posMarker.setLatLng([
-          position.coords.latitude,
-          position.coords.longitude,
-        ]);
+        // posMarker.setLatLng([
+        //   position.coords.latitude,
+        //   position.coords.longitude,
+        // ]);
+
+        posMarker.setLatLng([-33.85803526895217, 151.20859419563487]);
       });
     } else {
       alert("geolocation is not supported");
@@ -178,36 +192,36 @@
     <div class="overflow-y-scroll">
       <ul class="flex flex-col">
         {#if tab === "specific"}
-          {#each challenges as data, i}
+          {#each locationChallenges as id}
             <li class="contents">
               <button
                 class="grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 border-b-2 border-base-300 p-4 text-left"
-                on:click={() => focusMarker(i, true)}
+                on:click={() => focusMarker(id, true)}
               >
                 <div>📌</div>
-                <div>{data.name}</div>
+                <div>{challenges[id].name}</div>
                 <div class="text-xs">50m</div>
                 <div class="text-xs">
-                  {data.location.name}
+                  {challenges[id].location.name}
                   <span class="ml-2">
-                    🏆 {data.points}
+                    🏆 {challenges[id].points}
                   </span>
                 </div>
               </button>
             </li>
           {/each}
         {:else}
-          {#each anywhereChallenges as data, i}
+          {#each anywhereChallenges as id}
             <li class="contents">
               <button
                 class="block border-b-2 border-base-300 p-4 text-left"
-                on:click={() => focusMarker(i, true)}
+                on:click={() => focusMarker(id, true)}
               >
                 <div>
-                  {data.name}
+                  {challenges[id].name}
                 </div>
                 <div class="text-xs mt-1">
-                  🏆 {data.points}
+                  🏆 {challenges[id].points}
                 </div></button
               >
             </li>
