@@ -248,12 +248,12 @@
   <div
     class="relative {expanded
       ? 'h-[70vh]'
-      : 'h-16'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-300 overflow-hidden"
+      : 'h-16'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-200 overflow-hidden"
   >
     {#if selectedChallenge !== undefined}
       <div
-        class="absolute inset-0 bg-base-100 rounded-t-2xl z-20 flex flex-col"
-        transition:fly={{ y: 1000, opacity: 1 }}
+        class="fixed bottom-0 left-0 right-0 h-[70vh] bg-base-100 rounded-t-2xl z-20 flex flex-col"
+        transition:fly={{ y: 1000, opacity: 1, duration: 200 }}
       >
         <button
           class="px-3 py-4 flex w-full transition active:bg-base-200"
@@ -346,7 +346,7 @@
       </div>
     {/if}
     <button
-      class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200"
+      class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200 md:active:bg-base-100 md:cursor-default"
       on:click={() => toggleExpanded()}
     >
       <span>Team challenges</span>
