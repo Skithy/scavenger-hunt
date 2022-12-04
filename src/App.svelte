@@ -8,6 +8,9 @@
   import tickIcon from "./assets/icons/tick.svg";
   import leftIcon from "./assets/icons/left.svg";
   import downIcon from "./assets/icons/down.svg";
+  import cameraIcon from "./assets/icons/camera.svg";
+  import cupIcon from "./assets/icons/cup.svg";
+  import clockIcon from "./assets/icons/clock.svg";
   import {
     anywhereChallenges,
     challenges,
@@ -16,7 +19,7 @@
   } from "./challenges";
   import { getDistanceFromLatLonInKm, type Coord } from "./getDistance";
 
-  const DEBUG = false;
+  const DEBUG = true;
 
   type State = "locked" | "unlocked" | "done";
   const markerStates: Record<string, State> = Object.entries(challenges).reduce(
@@ -267,15 +270,12 @@
               <img src={lockIcon} alt="locked" />
             {/if}
           </h1>
-          <h2
-            class="{selectedChallenge.location
-              ? 'underline font-bold'
-              : ''} text-xs mt-2 mb-6"
-          >
+          <h2 class="text-xs mt-2 mb-6">
             {#if selectedChallenge.location}
               <a
                 href={selectedChallenge.location.link}
                 target="_blank"
+                class="underline font-bold"
                 rel="noreferrer">{selectedChallenge.location.name}</a
               >
             {:else}
@@ -293,10 +293,26 @@
               {@html marked(selectedChallenge.description, { renderer })}
             {/if}
           </div>
-          <div class="text-sm mt-6 mb-3">
-            🏆 Earn {selectedChallenge.points} point
-          </div>
-          <div class="text-sm">📷 Upload proof to your Slack channel</div>
+          <ul class="text-sm mt-6 flex flex-col gap-y-3">
+            <li class="flex gap-x-2">
+              <img src={cupIcon} alt="Points" />
+              <span>
+                Earn {selectedChallenge.points} point
+              </span>
+            </li>
+            <li class="flex gap-x-2">
+              <img src={cameraIcon} alt="Proof" />
+              <span>Upload proof to your Slack channel</span>
+            </li>
+            {#if selectedChallenge.timeLocked}
+              <li class="flex gap-x-2">
+                <img src={clockIcon} alt="Time limit" />
+                <span>Activity closes at <b>5.15pm</b></span>
+              </li>
+            {/if}
+          </ul>
+
+          <div class="text-sm" />
           {#if selectedChallenge.location}
             <a
               href={selectedChallenge.location.link}
@@ -396,7 +412,12 @@
                   <div class="text-xs">
                     {challenge.location.name}
                     <span class="ml-2">
-                      🏆 {challenge.points}
+                      <img
+                        src={cupIcon}
+                        alt="Points"
+                        class="inline h-4 w-4 align-bottom"
+                      />
+                      {challenge.points}
                     </span>
                   </div>
                 </div>
@@ -418,7 +439,12 @@
                   {challenge.name}
                 </div>
                 <div class="text-xs mt-1">
-                  🏆 {challenge.points}
+                  <img
+                    src={cupIcon}
+                    alt="Points"
+                    class="inline h-4 w-4 align-bottom"
+                  />
+                  {challenge.points}
                 </div></button
               >
             </li>

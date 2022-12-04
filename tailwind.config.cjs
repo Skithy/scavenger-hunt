@@ -1,11 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./index.html', './src/**/*.svelte'],
-  theme: {
-    fontWeight: {
-      bold: 500,
-    },
-  },
+  theme: {},
   daisyui: {
     themes: [
       {

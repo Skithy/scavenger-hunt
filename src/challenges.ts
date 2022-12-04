@@ -17,12 +17,13 @@ export type Challenge = {
   location?: {
     coords: [number, number]
     name: string
-    link?: string
+    link: string
   }
   name: string
   description: string
   points: string
   photo?: string
+  timeLocked?: boolean
 }
 
 export const challenges: Record<string, Challenge> = {
@@ -57,6 +58,7 @@ Earn extra points each if your tower:
 - is the highest tower`,
     points: 'up to 4',
     photo: blighBarneyReserve,
+    timeLocked: true,
   },
   house: {
     id: 'house',
@@ -151,6 +153,7 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
     description: `Enjoy a well-loved Aussie favourite for your arvo snack. They’re small in size but pack a punch.`,
     points: '1',
     photo: firstFleetPark,
+    timeLocked: true,
   },
   criminal: {
     id: 'criminal',
