@@ -16,6 +16,8 @@
   } from "./challenges";
   import { getDistanceFromLatLonInKm, type Coord } from "./getDistance";
 
+  const DEBUG = false;
+
   type State = "locked" | "unlocked" | "done";
   const markerStates: Record<string, State> = Object.entries(challenges).reduce(
     (total, [id, challenge]) => {
@@ -180,32 +182,36 @@
   }
 
   function getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition((position) => {
-        // TODO: uncomment
-        // posMarker.setLatLng([
-        //   position.coords.latitude,
-        //   position.coords.longitude,
-        // ]);
-        currentCoord = [-33.85803526895217, 151.20859419563487];
-        posMarker.setLatLng(currentCoord);
-
-        Object.entries(challenges).forEach(([id, challenge]) => {
-          if (challenge.location) {
-            markerDistances[id] = getDistanceFromLatLonInKm(
-              challenge.location.coords,
-              currentCoord
-            );
-            if (markerStates[id] === "locked" && markerDistances[id] < 0.1) {
-              markerStates[id] = "unlocked";
-              markers[id].setIcon(createIcon(challenge));
-            }
-          }
-        });
+    if (DEBUG) {
+      map.on("contextmenu", (e) => {
+        currentCoord = [e.latlng.lat, e.latlng.lng];
       });
     } else {
-      alert("geolocation is not supported");
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition((position) => {
+          currentCoord = [position.coords.latitude, position.coords.longitude];
+        });
+      } else {
+        alert("geolocation is not supported");
+      }
     }
+  }
+
+  $: if (currentCoord) {
+    posMarker.setLatLng(currentCoord);
+
+    Object.entries(challenges).forEach(([id, challenge]) => {
+      if (challenge.location) {
+        markerDistances[id] = getDistanceFromLatLonInKm(
+          challenge.location.coords,
+          currentCoord
+        );
+        if (markerStates[id] === "locked" && markerDistances[id] < 0.1) {
+          markerStates[id] = "unlocked";
+          markers[id].setIcon(createIcon(challenge));
+        }
+      }
+    });
   }
 
   function markChallenge(challenge: Challenge) {
@@ -251,8 +257,15 @@
           on:click={unfocusMarker}><img src={leftIcon} alt="Back" /></button
         >
         <div class="overflow-y-scroll px-4">
-          <h1 class="text-lg {selectedState === 'done' ? 'line-through' : ''}">
-            {selectedState === "locked" ? "Unlock me" : selectedChallenge.name}
+          <h1
+            class="text-lg flex items-center gap-x-2 {selectedState === 'done'
+              ? 'line-through'
+              : ''}"
+          >
+            {selectedChallenge.name}
+            {#if selectedState === "locked"}
+              <img src={lockIcon} alt="locked" />
+            {/if}
           </h1>
           <h2
             class="{selectedChallenge.location
@@ -269,11 +282,17 @@
               Anywhere
             {/if}
           </h2>
-          <p class="prose text-base-content">
-            {@html selectedState === "locked"
-              ? `Move closer to ${selectedChallenge.location.name} to unlock the challenge details.`
-              : marked(selectedChallenge.description, { renderer })}
-          </p>
+          <div class="prose text-base-content">
+            {#if selectedState === "locked"}
+              <p>This is a locked challenge.</p>
+              <p>
+                Move closer to {selectedChallenge.location.name} to unlock the challenge
+                details.
+              </p>
+            {:else}
+              {@html marked(selectedChallenge.description, { renderer })}
+            {/if}
+          </div>
           <div class="text-sm mt-6 mb-3">
             🏆 Earn {selectedChallenge.points} point
           </div>
