@@ -61,10 +61,11 @@ export const challenges: Record<string, Challenge> = {
       link: 'https://goo.gl/maps/r9DiHFKWTmpUKztd7',
     },
     name: 'House call',
-    description: `Two tasks:
-    1. What items are on the dresser?
-    2. Take a photo of the creepiest room you can find. Creepiest photo gets bonus points.
-    3. Take a team photo by the fire.`,
+    description: `
+Two tasks:
+1. What items are on the dresser?
+2. Take a photo of the creepiest room you can find. Creepiest photo gets bonus points.
+3. Take a team photo by the fire.`,
     points: '1',
     photo: foundationPark,
   },
@@ -128,8 +129,9 @@ export const challenges: Record<string, Challenge> = {
     },
     name: 'Year of the Tiger',
     description: `
-      Pose as your favourite Chinese zodiac animal, in front of Lindy Lee’s sculpture, Secret World of a Starlight Ember.
-      Bonus points if your team chooses a Zodiac animal that no other team has chosen.`,
+Pose as your favourite Chinese zodiac animal, in front of Lindy Lee’s sculpture, Secret World of a Starlight Ember.
+
+Bonus points if your team chooses a Zodiac animal that no other team has chosen.`,
     points: '1',
     photo: mcaForecourt,
   },
@@ -180,7 +182,7 @@ export const challenges: Record<string, Challenge> = {
     },
     name: 'Bust a move',
     description:
-      'Get ready for tonight’s dancefloor. Show us your moves by recreating this tiktok dance.',
+      'Get ready for tonight’s dancefloor. Show us your moves by recreating this [tiktok dance](https://www.tiktok.com/@junpei.zaki/video/7172858706902650114).',
     points: '3',
     photo: susannahPlace,
   },

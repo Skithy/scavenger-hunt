@@ -2,6 +2,7 @@
   import Leaflet from "leaflet";
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
+  import { marked, Renderer } from "marked";
   import leftIcon from "./assets/icons/Left.svg";
   import {
     anywhereChallenges,
@@ -62,6 +63,16 @@
   let map: Leaflet.Map;
   let expanded = false;
   let tab: "specific" | "anywhere" = "specific";
+
+  const renderer = new Renderer();
+  const linkRenderer = renderer.link;
+  renderer.link = (href, title, text) => {
+    const html = linkRenderer.call(renderer, href, title, text);
+    return html.replace(
+      /^<a /,
+      '<a target="_blank" rel="nofollow noreferrer" '
+    );
+  };
 
   onMount(() => {
     map = Leaflet.map("map", {
@@ -147,16 +158,16 @@
 </script>
 
 <main class="h-full flex flex-col md:flex-row">
-  <div id="map" class="flex-1 -mb-8" />
+  <div id="map" class="flex-1 -mb-8 md:mb-0" />
   <div
     class="relative {expanded
       ? 'h-[70vh]'
-      : 'h-[35vh]'} md:h-full flex flex-col rounded-t-2xl z-[1100] bg-white shadow-md transition-[height] duration-300"
+      : 'h-[35vh]'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-white shadow-md transition-[height] duration-300"
   >
     {#if selectedChallenge !== undefined}
       <div
         class="absolute inset-0 bg-white rounded-t-2xl z-20 flex flex-col"
-        transition:fly={{ y: 600, opacity: 1 }}
+        transition:fly={{ y: 1000, opacity: 1 }}
       >
         <button class="px-3 py-4 flex w-full" on:click={unfocusMarker}
           ><img src={leftIcon} alt="Back" /></button
@@ -176,7 +187,9 @@
               Anywhere
             {/if}
           </h2>
-          <p>{selectedChallenge.description}</p>
+          <p class="prose">
+            {@html marked(selectedChallenge.description, { renderer })}
+          </p>
           <div class="text-sm mt-6 mb-3">
             🏆 Earn {selectedChallenge.points} point
           </div>
