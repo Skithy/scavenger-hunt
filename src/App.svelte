@@ -3,9 +3,11 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
   import { marked, Renderer } from "marked";
+  import { sortBy } from "lodash";
   import lockIcon from "./assets/icons/lock.svg";
   import tickIcon from "./assets/icons/tick.svg";
   import leftIcon from "./assets/icons/left.svg";
+  import downIcon from "./assets/icons/down.svg";
   import {
     anywhereChallenges,
     challenges,
@@ -76,6 +78,7 @@
 
   let selectedId: string | undefined;
   $: selectedChallenge = challenges[selectedId];
+  $: selectedState = markerStates[selectedId];
 
   let currentCoord: Coord | undefined = undefined;
   const posMarker: Leaflet.Marker = Leaflet.marker(currentCoord ?? [0, 0], {
@@ -98,6 +101,15 @@
   let map: Leaflet.Map;
   let expanded = false;
   let tab: "specific" | "anywhere" = "specific";
+
+  const challengeOrder: State[] = ["unlocked", "locked", "done"];
+
+  $: sortedLocationChallenges = sortBy(locationChallenges, (id) =>
+    challengeOrder.indexOf(markerStates[id])
+  );
+  $: sortedAnywhereChallenges = sortBy(anywhereChallenges, (id) =>
+    challengeOrder.indexOf(markerStates[id])
+  );
 
   const renderer = new Renderer();
   const linkRenderer = renderer.link;
@@ -190,7 +202,7 @@
   function markChallenge(challenge: Challenge) {
     if (markerStates[challenge.id] === "done") {
       markerStates[challenge.id] = "unlocked";
-    } else {
+    } else if (markerStates[challenge.id] === "unlocked") {
       markerStates[challenge.id] = "done";
     }
 
@@ -218,25 +230,26 @@
   <div
     class="relative {expanded
       ? 'h-[70vh]'
-      : 'h-[35vh]'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-300"
+      : 'h-16'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-300 overflow-hidden"
   >
     {#if selectedChallenge !== undefined}
       <div
         class="absolute inset-0 bg-base-100 rounded-t-2xl z-20 flex flex-col"
         transition:fly={{ y: 1000, opacity: 1 }}
       >
-        <button class="px-3 py-4 flex w-full" on:click={unfocusMarker}
-          ><img src={leftIcon} alt="Back" /></button
+        <button
+          class="px-3 py-4 flex w-full transition active:bg-base-200"
+          on:click={unfocusMarker}><img src={leftIcon} alt="Back" /></button
         >
         <div class="overflow-y-scroll px-4">
-          <h1
-            class="text-lg {markerStates[selectedChallenge.id] === 'done'
-              ? 'line-through'
-              : ''}"
-          >
+          <h1 class="text-lg {selectedState === 'done' ? 'line-through' : ''}">
             {selectedChallenge.name}
           </h1>
-          <h2 class="underline font-bold text-xs mt-2 mb-6">
+          <h2
+            class="{selectedChallenge.location
+              ? 'underline font-bold'
+              : ''} text-xs mt-2 mb-6"
+          >
             {#if selectedChallenge.location}
               <a
                 href={selectedChallenge.location.link}
@@ -267,8 +280,8 @@
             Nailed it, cross it off my list!
             <input
               on:change={() => markChallenge(selectedChallenge)}
-              checked={markerStates[selectedChallenge.id] === "done"}
-              disabled={markerStates[selectedChallenge.id] === "locked"}
+              checked={selectedState === "done"}
+              disabled={selectedState === "locked"}
               class="toggle toggle-secondary toggle-lg"
               type="checkbox"
             />
@@ -286,12 +299,12 @@
       </div>
     {/if}
     <button
-      class="px-4 pt-6 pb-3 flex justify-between"
+      class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200"
       on:click={() => toggleExpanded()}
     >
       <span>Team challenges</span>
       <span class="transition md:hidden {expanded ? 'rotate-0' : 'rotate-180'}"
-        >V</span
+        ><img src={downIcon} alt={expanded ? "Close" : "Open"} /></span
       >
     </button>
     <div class="flex shadow-md">
@@ -311,10 +324,10 @@
     <div class="overflow-y-scroll">
       <ul class="flex flex-col">
         {#if tab === "specific"}
-          {#each locationChallenges.map((id) => challenges[id]) as challenge}
+          {#each sortedLocationChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
-                class="border-b-2 border-base-300 active:bg-base-200 "
+                class="transition border-b-2 border-base-300 active:bg-base-200 "
                 on:click={() => focusMarker(challenge.id)}
               >
                 <div
@@ -364,10 +377,10 @@
             </li>
           {/each}
         {:else}
-          {#each anywhereChallenges.map((id) => challenges[id]) as challenge}
+          {#each sortedAnywhereChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
-                class="block border-b-2 border-base-300 p-4 text-left active:bg-base-200"
+                class="transition block border-b-2 border-base-300 p-4 text-left active:bg-base-200"
                 on:click={() => focusMarker(challenge.id)}
               >
                 <div

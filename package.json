@@ -25,9 +25,11 @@
     "vite": "^3.2.3"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.191",
     "@types/marked": "^4.0.7",
     "daisyui": "^2.42.0",
     "leaflet": "^1.9.3",
+    "lodash": "^4.17.21",
     "marked": "^4.2.3"
   },
   "prettier": {
