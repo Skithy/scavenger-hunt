@@ -232,13 +232,13 @@
       <button
         class="text-xs transition p-2 flex-1 {tab === 'specific'
           ? 'border-accent font-bold'
-          : 'border-base-200'} border-b-2"
+          : 'border-base-300'} border-b-2 active:bg-base-200"
         on:click={() => (tab = "specific")}>Specific locations</button
       >
       <button
         class="text-xs transition p-2 flex-1 {tab === 'anywhere'
           ? 'border-accent font-bold'
-          : 'border-base-200'} border-b-2"
+          : 'border-base-300'} border-b-2 active:bg-base-200"
         on:click={() => (tab = "anywhere")}>Do anywhere</button
       >
     </div>
@@ -248,7 +248,7 @@
           {#each locationChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
-                class="grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 border-b-2 border-base-200 p-4 text-left"
+                class="grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 border-b-2 border-base-300 p-4 text-left active:bg-base-200"
                 on:click={() => focusMarker(challenge.id, true)}
               >
                 <div>📌</div>
@@ -269,7 +269,7 @@
           {#each anywhereChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
-                class="block border-b-2 border-base-200 p-4 text-left"
+                class="block border-b-2 border-base-300 p-4 text-left active:bg-base-200"
                 on:click={() => focusMarker(challenge.id, true)}
               >
                 <div>
