@@ -72,7 +72,7 @@
     `${markerClass(active)} bg-success text-success-content`;
   const doneIcon = (active = false) =>
     Leaflet.divIcon({
-      className: `opacity-80 ${doneClass(active)}`,
+      className: `opacity-90 ${doneClass(active)}`,
       html: `<img src=${tickIcon} alt="Done" />`,
     });
 
