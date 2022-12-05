@@ -26,7 +26,7 @@
     on:click={onClose}><img src={leftIcon} alt="Back" /></button
   >
   <div class="px-4">
-    <h1 class="text-lg">How to play</h1>
+    <h1 class="text-lg mb-4">How to play</h1>
 
     <div class="prose text-base-content">
       <p>
@@ -39,7 +39,7 @@
       </p>
     </div>
 
-    <h1 class="text-lg">Locked challenges</h1>
+    <h1 class="text-lg mb-4 mt-6">Locked challenges</h1>
 
     <div class="prose text-base-content">
       <p>
