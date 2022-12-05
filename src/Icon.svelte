@@ -1,7 +1,7 @@
 <script type="ts">
-  import type { Challenge } from './challenges'
-  import { doneClass, lockedClass, unlockedClass } from './icons'
-  import { markerStates } from './stores'
+  import type { Challenge } from './data/challenges'
+  import { doneClass, lockedClass, unlockedClass } from './data/icons'
+  import { markerStates } from './data/stores'
   import tickIcon from './assets/icons/tick.svg'
 
   export let challenge: Challenge

@@ -2,8 +2,8 @@
   import Leaflet from 'leaflet'
   import { onMount } from 'svelte'
   import positionIcon from './assets/icons/position.svg'
-  import { challenges } from './challenges'
-  import { getDistanceFromLatLonInKm } from './getDistance'
+  import { challenges } from './data/challenges'
+  import { getDistanceFromLatLonInKm } from './utils/getDistance'
   import Details from './Details.svelte'
   import {
     doneIcon,
@@ -12,14 +12,14 @@
     hereYellowIcon,
     lockedIcon,
     unlockedIcon,
-  } from './icons'
+  } from './data/icons'
   import Sidebar from './Sidebar.svelte'
   import {
     currentAccuracy,
     currentCoord,
     markerDistances,
     markerStates,
-  } from './stores'
+  } from './data/stores'
 
   const DEBUG = true
 

@@ -1,7 +1,7 @@
 <script type="ts">
-  import type { Challenge } from './challenges'
+  import type { Challenge } from './data/challenges'
   import cupIcon from './assets/icons/cup.svg'
-  import { markerDistances, markerStates } from './stores'
+  import { markerDistances, markerStates } from './data/stores'
   import Icon from './Icon.svelte'
 
   export let challenges: Challenge[]

@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import { challenges, type State } from './challenges'
-import type { Coord } from './getDistance'
+import type { Coord } from '../utils/getDistance'
 
 export const currentCoord = writable<Coord | undefined>(undefined)
 export const currentAccuracy = writable<number | undefined>(undefined)

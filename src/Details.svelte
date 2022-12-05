@@ -6,10 +6,10 @@
   import cameraIcon from './assets/icons/camera.svg'
   import cupIcon from './assets/icons/cup.svg'
   import clockIcon from './assets/icons/clock.svg'
-  import { renderer } from './markdown'
-  import { challenges } from './challenges'
+  import { renderer } from './utils/markdown'
+  import { challenges } from './data/challenges'
   import { marked } from 'marked'
-  import { markerStates } from './stores'
+  import { markerStates } from './data/stores'
 
   export let onClose: () => void
   export let completeChallenge: () => void

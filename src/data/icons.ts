@@ -1,5 +1,5 @@
 import Leaflet from 'leaflet'
-import tickIcon from './assets/icons/tick.svg'
+import tickIcon from '../assets/icons/tick.svg'
 import type { Challenge } from './challenges'
 
 const activeClass = 'ring-info ring-4 !z-[300]'

@@ -6,8 +6,8 @@
     challengeOrder,
     challenges,
     locationChallenges,
-  } from './challenges'
-  import { markerStates } from './stores'
+  } from './data/challenges'
+  import { markerStates } from './data/stores'
   import List from './List.svelte'
 
   export let expanded: boolean
