@@ -98,6 +98,7 @@
   $: selectedState = markerStates[selectedId]
 
   let currentCoord: Coord | undefined = undefined
+  let currentAccuracy: number | undefined = undefined
   const posMarker: Leaflet.Marker = Leaflet.marker(currentCoord ?? [0, 0], {
     icon: hereIcon,
   })
@@ -204,9 +205,10 @@
         locationWatch = navigator.geolocation.watchPosition(
           (position) => {
             currentCoord = [position.coords.latitude, position.coords.longitude]
-            if (position.coords.accuracy < 10) {
+            currentAccuracy = position.coords.accuracy
+            if (currentAccuracy < 10) {
               posMarker.setIcon(hereIcon)
-            } else if (position.coords.accuracy < 50) {
+            } else if (currentAccuracy < 50) {
               posMarker.setIcon(hereYellowIcon)
             } else {
               posMarker.setIcon(hereLowIcon)
@@ -276,9 +278,17 @@
 <main class="h-full flex flex-col md:flex-row">
   <div id="map" class="relative flex-1 -mb-8 md:mb-0">
     <div class="absolute top-8 right-8 z-[9999]">
-      <button on:click={centerLocation} class="bg-base-100 rounded">
+      <button
+        on:click={centerLocation}
+        class="flex justify-center items-center bg-base-100 rounded"
+      >
         <img src={positionIcon} alt="Current position" />
       </button>
+      {#if currentAccuracy}
+        <div>
+          Accuracy: {currentAccuracy.toFixed(2)}
+        </div>
+      {/if}
     </div>
   </div>
   <div
