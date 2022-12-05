@@ -149,7 +149,7 @@
       (error) => {
         locationError = error.message
       },
-      { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
+      { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 }
     )
   }
 
