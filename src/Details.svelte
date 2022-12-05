@@ -6,15 +6,17 @@
   import cameraIcon from './assets/icons/camera.svg'
   import cupIcon from './assets/icons/cup.svg'
   import clockIcon from './assets/icons/clock.svg'
-  import type { State } from './markers'
   import { renderer } from './markdown'
-  import type { Challenge } from './challenges'
+  import { challenges } from './challenges'
   import { marked } from 'marked'
+  import { markerStates } from './stores'
 
   export let onClose: () => void
   export let completeChallenge: () => void
-  export let state: State
-  export let challenge: Challenge
+  export let challengeId: string
+
+  $: state = $markerStates[challengeId]
+  $: challenge = challenges[challengeId]
 </script>
 
 <div

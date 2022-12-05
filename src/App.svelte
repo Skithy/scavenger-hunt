@@ -1,65 +1,31 @@
 <script type="ts">
   import Leaflet from 'leaflet'
   import { onMount } from 'svelte'
-  import { sortBy } from 'lodash'
   import positionIcon from './assets/icons/position.svg'
-  import tickIcon from './assets/icons/tick.svg'
-  import downIcon from './assets/icons/down.svg'
-  import cupIcon from './assets/icons/cup.svg'
-  import {
-    anywhereChallenges,
-    challenges,
-    locationChallenges,
-    type Challenge,
-  } from './challenges'
-  import { getDistanceFromLatLonInKm, type Coord } from './getDistance'
-  import type { State } from './markers'
+  import { challenges } from './challenges'
+  import { getDistanceFromLatLonInKm } from './getDistance'
   import Details from './Details.svelte'
   import {
-    doneClass,
     doneIcon,
     hereIcon,
     hereLowIcon,
     hereYellowIcon,
-    lockedClass,
     lockedIcon,
-    unlockedClass,
     unlockedIcon,
   } from './icons'
+  import Sidebar from './Sidebar.svelte'
+  import {
+    currentAccuracy,
+    currentCoord,
+    markerDistances,
+    markerStates,
+  } from './stores'
 
   const DEBUG = true
 
-  const posMarker: Leaflet.Marker = Leaflet.marker([0, 0], { icon: hereIcon })
-
-  const markerStates: Record<string, State> = Object.entries(challenges).reduce(
-    (total, [id, challenge]) => {
-      total[id] = challenge.location ? 'locked' : 'unlocked'
-      return total
-    },
-    {}
-  )
-
-  const markerDistances: Record<string, number> = Object.keys(
-    challenges
-  ).reduce((total, id) => {
-    total[id] = 0
-    return total
-  }, {})
-
-  const markers: Record<string, Leaflet.Marker | undefined> = Object.entries(
-    challenges
-  ).reduce((total, [id, challenge]) => {
-    if (challenge.location) {
-      const marker = Leaflet.marker(challenge.location.coords, {
-        icon: createIcon(challenge),
-      }).on('click', () => focusMarker(id))
-      total[id] = marker
-    }
-    return total
-  }, {})
-
-  function createIcon(challenge: Challenge, active = false) {
-    switch (markerStates[challenge.id]) {
+  function createIcon(id: string, active = false) {
+    const challenge = challenges[id]
+    switch ($markerStates[challenge.id]) {
       case 'done':
         return doneIcon(active)
       case 'locked':
@@ -69,24 +35,23 @@
     }
   }
 
-  let selectedId: string | undefined
+  const posMarker = Leaflet.marker([0, 0], { icon: hereIcon })
+  const markers: Record<string, Leaflet.Marker | undefined> = Object.entries(
+    challenges
+  ).reduce((total, [id, challenge]) => {
+    if (challenge.location) {
+      total[id] = Leaflet.marker(challenge.location.coords, {
+        icon: createIcon(id),
+      })
+    }
+    return total
+  }, {})
 
-  let currentCoord: Coord | undefined = undefined
-  let currentAccuracy: number | undefined = undefined
+  let selectedId: string | undefined
 
   let map: Leaflet.Map
   let expanded = false
-  let tab: 'specific' | 'anywhere' = 'specific'
   let locationWatch: number | undefined = undefined
-
-  const challengeOrder: State[] = ['unlocked', 'locked', 'done']
-
-  $: sortedLocationChallenges = sortBy(locationChallenges, (id) =>
-    challengeOrder.indexOf(markerStates[id])
-  )
-  $: sortedAnywhereChallenges = sortBy(anywhereChallenges, (id) =>
-    challengeOrder.indexOf(markerStates[id])
-  )
 
   onMount(() => {
     map = Leaflet.map('map', {
@@ -109,27 +74,29 @@
       }
     ).addTo(map)
 
-    getLocation()
     posMarker.addTo(map)
-    Object.values(markers).forEach((marker) => marker?.addTo(map))
+    Object.entries(markers).forEach(([id, marker]) => {
+      if (marker) {
+        marker.on('click', () => focusMarker(id)).addTo(map)
+      }
+    })
+
+    if (DEBUG) {
+      map.on('contextmenu', (e) => {
+        $currentCoord = [e.latlng.lat, e.latlng.lng]
+        $currentAccuracy = 0
+      })
+    }
+
+    getLocation()
   })
 
-  $: toggleExpanded = (newState = !expanded) => {
+  async function toggleExpanded(newState = !expanded) {
     if (expanded !== newState) {
       expanded = newState
       return new Promise((res) => {
-        setTimeout(() => {
-          map.invalidateSize({ pan: false })
-          res(null)
-        }, 200)
+        setTimeout(() => res(map.invalidateSize({ pan: false })), 200)
       })
-    }
-  }
-
-  function unfocusMarker() {
-    if (selectedId) {
-      markers[selectedId]?.setIcon(createIcon(challenges[selectedId], false))
-      selectedId = undefined
     }
   }
 
@@ -139,90 +106,79 @@
     await toggleExpanded(true)
     const marker = markers[id]
     if (marker) {
+      marker.setIcon(createIcon(id, true))
       map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 17))
-      marker.setIcon(createIcon(challenges[id], true))
+    }
+  }
+
+  function unfocusMarker() {
+    if (selectedId) {
+      markers[selectedId]?.setIcon(createIcon(selectedId, false))
+      selectedId = undefined
     }
   }
 
   function getLocation() {
-    if (DEBUG) {
-      map.on('contextmenu', (e) => {
-        currentCoord = [e.latlng.lat, e.latlng.lng]
-      })
-    }
-
-    if (navigator.geolocation) {
-      if (locationWatch === undefined) {
-        locationWatch = navigator.geolocation.watchPosition(
-          (position) => {
-            currentCoord = [position.coords.latitude, position.coords.longitude]
-            currentAccuracy = position.coords.accuracy
-            if (currentAccuracy < 10) {
-              posMarker.setIcon(hereIcon)
-            } else if (currentAccuracy < 50) {
-              posMarker.setIcon(hereYellowIcon)
-            } else {
-              posMarker.setIcon(hereLowIcon)
-            }
-          },
-          (error) => {
-            alert(error.message)
-          },
-          { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
-        )
-      }
-    } else {
+    if (!navigator.geolocation) {
       alert('geolocation is not supported')
     }
+
+    if (locationWatch) {
+      return
+    }
+
+    locationWatch = navigator.geolocation.watchPosition(
+      (position) => {
+        $currentCoord = [position.coords.latitude, position.coords.longitude]
+        $currentAccuracy = position.coords.accuracy
+      },
+      (error) => {
+        alert(error.message)
+      },
+      { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
+    )
   }
 
-  $: if (currentCoord) {
-    posMarker.setLatLng(currentCoord)
+  $: if ($currentCoord) {
+    posMarker.setLatLng($currentCoord)
 
     Object.entries(challenges).forEach(([id, challenge]) => {
       if (challenge.location) {
-        markerDistances[id] = getDistanceFromLatLonInKm(
+        $markerDistances[id] = getDistanceFromLatLonInKm(
           challenge.location.coords,
-          currentCoord
+          $currentCoord
         )
-        if (markerStates[id] === 'locked' && markerDistances[id] < 0.1) {
-          markerStates[id] = 'unlocked'
-          markers[id].setIcon(createIcon(challenge))
+        if ($markerStates[id] === 'locked' && $markerDistances[id] < 0.1) {
+          $markerStates[id] = 'unlocked'
+          markers[id].setIcon(createIcon(id))
         }
       }
     })
   }
 
-  function markChallenge(challenge: Challenge) {
-    if (markerStates[challenge.id] === 'done') {
-      markerStates[challenge.id] = 'unlocked'
-    } else if (markerStates[challenge.id] === 'unlocked') {
-      markerStates[challenge.id] = 'done'
-    }
-
-    markers[challenge.id].setIcon(createIcon(challenge, true))
+  $: if ($currentAccuracy < 10) {
+    posMarker.setIcon(hereIcon)
+  } else if ($currentAccuracy < 50) {
+    posMarker.setIcon(hereYellowIcon)
+  } else {
+    posMarker.setIcon(hereLowIcon)
   }
 
-  $: centerLocation = () => {
-    if (currentCoord) {
-      map.flyTo(currentCoord)
-    } else {
-      getLocation()
+  function markChallenge(id: string) {
+    if ($markerStates[id] === 'done') {
+      $markerStates[id] = 'unlocked'
+    } else if ($markerStates[id] === 'unlocked') {
+      $markerStates[id] = 'done'
     }
+
+    markers[id].setIcon(createIcon(id, true))
   }
 
-  $: getDistanceText = (challenge: Challenge) => {
-    const distance = markerDistances[challenge.id]
-
-    if (!distance) {
-      return ''
+  function centerLocation() {
+    getLocation()
+    if ($currentCoord) {
+      map.flyTo($currentCoord)
     }
-
-    if (distance > 1) {
-      return `${distance.toFixed(1)}km`
-    }
-
-    return `${(distance * 1000).toFixed(0)}m`
   }
 </script>
 
@@ -235,133 +191,20 @@
       >
         <img src={positionIcon} alt="Current position" />
       </button>
-      {#if currentAccuracy}
+      {#if $currentAccuracy}
         <div>
-          Accuracy: {currentAccuracy.toFixed(2)}
+          Accuracy: {$currentAccuracy.toFixed(2)}
         </div>
       {/if}
     </div>
   </div>
-  <div
-    class="relative {expanded
-      ? 'h-[70vh]'
-      : 'h-16'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-200 overflow-hidden"
-  >
-    <button
-      class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200 md:active:bg-base-100 md:cursor-default"
-      on:click={() => toggleExpanded()}
-    >
-      <span>Team challenges</span>
-      <span class="transition md:hidden {expanded ? 'rotate-0' : 'rotate-180'}"
-        ><img src={downIcon} alt={expanded ? 'Close' : 'Open'} /></span
-      >
-    </button>
-    <div class="flex shadow-md">
-      <button
-        class="text-sm transition p-2 flex-1 {tab === 'specific'
-          ? 'border-accent font-bold'
-          : 'border-base-300'} border-b-2 active:bg-base-200"
-        on:click={() => (tab = 'specific')}>Specific locations</button
-      >
-      <button
-        class="text-sm transition p-2 flex-1 {tab === 'anywhere'
-          ? 'border-accent font-bold'
-          : 'border-base-300'} border-b-2 active:bg-base-200"
-        on:click={() => (tab = 'anywhere')}>Do anywhere</button
-      >
-    </div>
-    <div class="overflow-y-scroll">
-      <ul class="flex flex-col">
-        {#if tab === 'specific'}
-          {#each sortedLocationChallenges.map((id) => challenges[id]) as challenge}
-            <li class="contents">
-              <button
-                class="transition border-b-2 border-base-300 active:bg-base-200 "
-                on:click={() => focusMarker(challenge.id)}
-              >
-                <div
-                  class="transition grid grid-cols-[auto_1fr] gap-y-1 gap-x-4 p-4 text-left {markerStates[
-                    challenge.id
-                  ] === 'locked'
-                    ? 'opacity-60'
-                    : 'opacity-100'}"
-                >
-                  <div>
-                    {#if markerStates[challenge.id] === 'locked'}
-                      <div class={lockedClass}>
-                        {challenge.name[0]}
-                      </div>
-                    {:else if markerStates[challenge.id] === 'unlocked'}
-                      <div class={unlockedClass}>
-                        {challenge.name[0]}
-                      </div>
-                    {:else}
-                      <div class={doneClass}>
-                        <img src={tickIcon} alt="Done" />
-                      </div>
-                    {/if}
-                  </div>
-                  <div
-                    class={markerStates[challenge.id] === 'done'
-                      ? 'line-through'
-                      : ''}
-                  >
-                    {challenge.name}
-                  </div>
-                  <div class="text-xs text-center">
-                    {getDistanceText(challenge)}
-                  </div>
-                  <div class="text-xs">
-                    {challenge.location.name}
-                    <span class="ml-2">
-                      <img
-                        src={cupIcon}
-                        alt="Points"
-                        class="inline h-4 w-4 align-bottom"
-                      />
-                      {challenge.points}
-                    </span>
-                  </div>
-                </div>
-              </button>
-            </li>
-          {/each}
-        {:else}
-          {#each sortedAnywhereChallenges.map((id) => challenges[id]) as challenge}
-            <li class="contents">
-              <button
-                class="transition block border-b-2 border-base-300 p-4 text-left active:bg-base-200"
-                on:click={() => focusMarker(challenge.id)}
-              >
-                <div
-                  class={markerStates[challenge.id] === 'done'
-                    ? 'line-through'
-                    : ''}
-                >
-                  {challenge.name}
-                </div>
-                <div class="text-xs mt-1">
-                  <img
-                    src={cupIcon}
-                    alt="Points"
-                    class="inline h-4 w-4 align-bottom"
-                  />
-                  {challenge.points}
-                </div></button
-              >
-            </li>
-          {/each}
-        {/if}
-      </ul>
-    </div>
-  </div>
+  <Sidebar {toggleExpanded} {expanded} {focusMarker} />
 
   {#if selectedId !== undefined}
     <Details
-      challenge={challenges[selectedId]}
-      state={markerStates[selectedId]}
+      challengeId={selectedId}
       onClose={unfocusMarker}
-      completeChallenge={() => markChallenge(challenges[selectedId])}
+      completeChallenge={() => markChallenge(selectedId)}
     />
   {/if}
 </main>

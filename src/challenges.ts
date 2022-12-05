@@ -12,6 +12,9 @@ import observatoryHill from './assets/photos/observatory-hill.png'
 import rocksMarket from './assets/photos/rocks-market.png'
 import susannahPlace from './assets/photos/susannah-place.png'
 
+export type State = 'locked' | 'unlocked' | 'done'
+export const challengeOrder: State[] = ['unlocked', 'locked', 'done']
+
 export type Challenge = {
   id: string
   location?: {
