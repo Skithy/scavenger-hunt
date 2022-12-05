@@ -21,7 +21,7 @@
   } from './challenges'
   import { getDistanceFromLatLonInKm, type Coord } from './getDistance'
 
-  const DEBUG = false
+  const DEBUG = true
 
   type State = 'locked' | 'unlocked' | 'done'
   const markerStates: Record<string, State> = Object.entries(challenges).reduce(
@@ -179,7 +179,8 @@
     // want to be respectful there is no need to bother them anymore.
   }
 
-  function toggleExpanded(newState = !expanded) {
+  $: toggleExpanded = (newState = !expanded) => {
+    console.log('toggleExpanded', expanded, newState)
     if (expanded !== newState) {
       expanded = newState
       return new Promise((res) => {
@@ -214,16 +215,16 @@
       map.on('contextmenu', (e) => {
         currentCoord = [e.latlng.lat, e.latlng.lng]
       })
+    }
+
+    console.log('getting current location')
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition((position) => {
+        console.log('watch current location', position)
+        currentCoord = [position.coords.latitude, position.coords.longitude]
+      })
     } else {
-      console.log('getting current location')
-      if (navigator.geolocation) {
-        navigator.geolocation.watchPosition((position) => {
-          console.log('watch current location', position)
-          currentCoord = [position.coords.latitude, position.coords.longitude]
-        })
-      } else {
-        alert('geolocation is not supported')
-      }
+      alert('geolocation is not supported')
     }
   }
 
