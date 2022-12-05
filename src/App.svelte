@@ -144,6 +144,7 @@
       (position) => {
         $currentCoord = [position.coords.latitude, position.coords.longitude]
         $currentAccuracy = position.coords.accuracy
+        locationError = undefined
       },
       (error) => {
         locationError = error.message
