@@ -108,6 +108,7 @@
   let map: Leaflet.Map
   let expanded = false
   let tab: 'specific' | 'anywhere' = 'specific'
+  let locationWatch: number | undefined = undefined
 
   const challengeOrder: State[] = ['unlocked', 'locked', 'done']
 
@@ -151,34 +152,6 @@
     Object.values(markers).forEach((marker) => marker?.addTo(map))
   })
 
-  function notifyChallenge(challenge: Challenge) {
-    if (!('Notification' in window)) {
-      // Check if the browser supports notifications
-      alert('This browser does not support desktop notification')
-    } else if (Notification.permission === 'granted') {
-      // Check whether notification permissions have already been granted;
-      // if so, create a notification
-      const notification = new Notification(
-        `Challenge [${challenge.name}] has been unlocked!`
-      )
-      // …
-    } else if (Notification.permission !== 'denied') {
-      // We need to ask the user for permission
-      Notification.requestPermission().then((permission) => {
-        // If the user accepts, let's create a notification
-        if (permission === 'granted') {
-          const notification = new Notification(
-            `Challenge [${challenge.name}] has been unlocked!`
-          )
-          // …
-        }
-      })
-    }
-
-    // At last, if the user has denied notifications, and you
-    // want to be respectful there is no need to bother them anymore.
-  }
-
   $: toggleExpanded = (newState = !expanded) => {
     console.log('toggleExpanded', expanded, newState)
     if (expanded !== newState) {
@@ -218,24 +191,24 @@
       })
     }
 
-    console.log('getting current location')
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(
-        (position) => {
-          currentCoord = [position.coords.latitude, position.coords.longitude]
-        },
-        (error) => {
-          alert(error.message)
-        },
-        { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
-      )
+      if (locationWatch === undefined) {
+        locationWatch = navigator.geolocation.watchPosition(
+          (position) => {
+            currentCoord = [position.coords.latitude, position.coords.longitude]
+          },
+          (error) => {
+            alert(error.message)
+          },
+          { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
+        )
+      }
     } else {
       alert('geolocation is not supported')
     }
   }
 
   $: if (currentCoord) {
-    console.log('currentCoord', currentCoord)
     posMarker.setLatLng(currentCoord)
 
     Object.entries(challenges).forEach(([id, challenge]) => {
@@ -247,7 +220,6 @@
         if (markerStates[id] === 'locked' && markerDistances[id] < 0.1) {
           markerStates[id] = 'unlocked'
           markers[id].setIcon(createIcon(challenge))
-          // notifyChallenge(challenge)
         }
       }
     })
@@ -260,27 +232,14 @@
       markerStates[challenge.id] = 'done'
     }
 
-    console.log(markerStates[challenge.id])
     markers[challenge.id].setIcon(createIcon(challenge, true))
   }
 
   $: centerLocation = () => {
-    console.log('centerLocation')
     if (currentCoord) {
       map.flyTo(currentCoord)
-    }
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          currentCoord = [position.coords.latitude, position.coords.longitude]
-        },
-        (error) => {
-          alert(error.message)
-        },
-        { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
-      )
     } else {
-      alert('geolocation is not supported')
+      getLocation()
     }
   }
 
