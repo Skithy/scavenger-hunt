@@ -1,180 +1,178 @@
 <script type="ts">
-  import Leaflet from "leaflet";
-  import { onMount } from "svelte";
-  import { fly } from "svelte/transition";
-  import * as easingFns from "svelte/easing";
-  import { marked, Renderer } from "marked";
-  import { sortBy } from "lodash";
-  import lockIcon from "./assets/icons/lock.svg";
-  import tickIcon from "./assets/icons/tick.svg";
-  import leftIcon from "./assets/icons/left.svg";
-  import downIcon from "./assets/icons/down.svg";
-  import cameraIcon from "./assets/icons/camera.svg";
-  import cupIcon from "./assets/icons/cup.svg";
-  import clockIcon from "./assets/icons/clock.svg";
+  import Leaflet from 'leaflet'
+  import { onMount } from 'svelte'
+  import { fly } from 'svelte/transition'
+  import * as easingFns from 'svelte/easing'
+  import { marked, Renderer } from 'marked'
+  import { sortBy } from 'lodash'
+  import lockIcon from './assets/icons/lock.svg'
+  import positionIcon from './assets/icons/position.svg'
+  import tickIcon from './assets/icons/tick.svg'
+  import leftIcon from './assets/icons/left.svg'
+  import downIcon from './assets/icons/down.svg'
+  import cameraIcon from './assets/icons/camera.svg'
+  import cupIcon from './assets/icons/cup.svg'
+  import clockIcon from './assets/icons/clock.svg'
   import {
     anywhereChallenges,
     challenges,
     locationChallenges,
     type Challenge,
-  } from "./challenges";
-  import { getDistanceFromLatLonInKm, type Coord } from "./getDistance";
+  } from './challenges'
+  import { getDistanceFromLatLonInKm, type Coord } from './getDistance'
 
-  const DEBUG = false;
+  const DEBUG = false
 
-  type State = "locked" | "unlocked" | "done";
+  type State = 'locked' | 'unlocked' | 'done'
   const markerStates: Record<string, State> = Object.entries(challenges).reduce(
     (total, [id, challenge]) => {
-      total[id] = challenge.location ? "locked" : "unlocked";
-      return total;
+      total[id] = challenge.location ? 'locked' : 'unlocked'
+      return total
     },
     {}
-  );
+  )
 
   const markerDistances: Record<string, number> = Object.keys(
     challenges
   ).reduce((total, id) => {
-    total[id] = 0;
-    return total;
-  }, {});
+    total[id] = 0
+    return total
+  }, {})
 
   const markerClass = (active = false) =>
     `!h-8 !w-8 rounded-full !flex items-center justify-center !font-bold !text-md shadow-md ${
-      active ? "ring-info ring-4 !z-[300]" : ""
-    }`;
+      active ? 'ring-info ring-4 !z-[300]' : ''
+    }`
 
   const createIcon = (challenge: Challenge, active = false) => {
     switch (markerStates[challenge.id]) {
-      case "done":
-        return doneIcon(active);
-      case "locked":
-        return lockedIcon(challenge, active);
-      case "unlocked":
-        return unlockedIcon(challenge, active);
+      case 'done':
+        return doneIcon(active)
+      case 'locked':
+        return lockedIcon(challenge, active)
+      case 'unlocked':
+        return unlockedIcon(challenge, active)
     }
-  };
+  }
 
   const unlockedClass = (active = false) =>
-    `${markerClass(active)} bg-accent text-accent-content`;
+    `${markerClass(active)} bg-accent text-accent-content`
   const unlockedIcon = (challenge: Challenge, active = false) =>
     Leaflet.divIcon({
       className: `opacity-90 ${unlockedClass(active)}`,
       html: challenge.name[0],
-    });
+    })
 
   const hereIcon = Leaflet.divIcon({
-    className: "bg-info !h-4 !w-4 rounded-full shadow-md border-2 border-white",
-  });
+    className: 'bg-info !h-4 !w-4 rounded-full shadow-md border-2 border-white',
+  })
 
   const lockedClass = (active = false) =>
-    `${markerClass(active)} bg-secondary text-secondary-content`;
+    `${markerClass(active)} bg-secondary text-secondary-content`
   const lockedIcon = (challenge: Challenge, active = false) =>
     Leaflet.divIcon({
       className: `opacity-80 ${lockedClass(active)}`,
       html: challenge.name[0],
-    });
+    })
 
   const doneClass = (active = false) =>
-    `${markerClass(active)} bg-success text-success-content`;
+    `${markerClass(active)} bg-success text-success-content`
   const doneIcon = (active = false) =>
     Leaflet.divIcon({
       className: `opacity-90 ${doneClass(active)}`,
       html: `<img src=${tickIcon} alt="Done" />`,
-    });
+    })
 
-  let selectedId: string | undefined;
-  $: selectedChallenge = challenges[selectedId];
-  $: selectedState = markerStates[selectedId];
+  let selectedId: string | undefined
+  $: selectedChallenge = challenges[selectedId]
+  $: selectedState = markerStates[selectedId]
 
-  let currentCoord: Coord | undefined = undefined;
+  let currentCoord: Coord | undefined = undefined
   const posMarker: Leaflet.Marker = Leaflet.marker(currentCoord ?? [0, 0], {
     icon: hereIcon,
-  });
+  })
   const markers: Record<string, Leaflet.Marker | undefined> = Object.entries(
     challenges
   ).reduce((total, [id, challenge]) => {
     if (challenge.location) {
       const marker = Leaflet.marker(challenge.location.coords, {
         icon: createIcon(challenge),
-      }).on("click", () => {
-        focusMarker(id);
-      });
-      total[id] = marker;
+      }).on('click', () => {
+        focusMarker(id)
+      })
+      total[id] = marker
     }
-    return total;
-  }, {});
+    return total
+  }, {})
 
-  let map: Leaflet.Map;
-  let expanded = false;
-  let tab: "specific" | "anywhere" = "specific";
+  let map: Leaflet.Map
+  let expanded = false
+  let tab: 'specific' | 'anywhere' = 'specific'
 
-  const challengeOrder: State[] = ["unlocked", "locked", "done"];
+  const challengeOrder: State[] = ['unlocked', 'locked', 'done']
 
   $: sortedLocationChallenges = sortBy(locationChallenges, (id) =>
     challengeOrder.indexOf(markerStates[id])
-  );
+  )
   $: sortedAnywhereChallenges = sortBy(anywhereChallenges, (id) =>
     challengeOrder.indexOf(markerStates[id])
-  );
+  )
 
-  const renderer = new Renderer();
-  const linkRenderer = renderer.link;
+  const renderer = new Renderer()
+  const linkRenderer = renderer.link
   renderer.link = (href, title, text) => {
-    const html = linkRenderer.call(renderer, href, title, text);
-    return html.replace(
-      /^<a /,
-      '<a target="_blank" rel="nofollow noreferrer" '
-    );
-  };
+    const html = linkRenderer.call(renderer, href, title, text)
+    return html.replace(/^<a /, '<a target="_blank" rel="nofollow noreferrer" ')
+  }
 
   onMount(() => {
-    map = Leaflet.map("map", {
+    map = Leaflet.map('map', {
       maxBounds: [
         [-33.85, 151.19972638009483],
         [-33.868, 151.218],
       ],
     })
       .setView([-33.85803526895217, 151.20859419563487], 16)
-      .on("click", () => {
-        unfocusMarker();
-        toggleExpanded(false);
-      });
+      .on('click', () => {
+        unfocusMarker()
+        toggleExpanded(false)
+      })
 
     Leaflet.tileLayer(
-      "https://{s}.tile.jawg.io/jawg-sunny/{z}/{x}/{y}{r}.png?access-token=GZQzSfPKg5ysveVGL3cr0No9YYGhlNkbxtpqF8nyQu4qWnSXj83kZpwnzG73lVmF",
+      'https://{s}.tile.jawg.io/jawg-sunny/{z}/{x}/{y}{r}.png?access-token=GZQzSfPKg5ysveVGL3cr0No9YYGhlNkbxtpqF8nyQu4qWnSXj83kZpwnzG73lVmF',
       {
         minZoom: 15,
         maxZoom: 20,
       }
-    ).addTo(map);
+    ).addTo(map)
 
-    getLocation();
-    posMarker.addTo(map);
-    Object.values(markers).forEach((marker) => marker?.addTo(map));
-  });
+    getLocation()
+    posMarker.addTo(map)
+    Object.values(markers).forEach((marker) => marker?.addTo(map))
+  })
 
   function notifyChallenge(challenge: Challenge) {
-    if (!("Notification" in window)) {
+    if (!('Notification' in window)) {
       // Check if the browser supports notifications
-      alert("This browser does not support desktop notification");
-    } else if (Notification.permission === "granted") {
+      alert('This browser does not support desktop notification')
+    } else if (Notification.permission === 'granted') {
       // Check whether notification permissions have already been granted;
       // if so, create a notification
       const notification = new Notification(
         `Challenge [${challenge.name}] has been unlocked!`
-      );
+      )
       // …
-    } else if (Notification.permission !== "denied") {
+    } else if (Notification.permission !== 'denied') {
       // We need to ask the user for permission
       Notification.requestPermission().then((permission) => {
         // If the user accepts, let's create a notification
-        if (permission === "granted") {
+        if (permission === 'granted') {
           const notification = new Notification(
             `Challenge [${challenge.name}] has been unlocked!`
-          );
+          )
           // …
         }
-      });
+      })
     }
 
     // At last, if the user has denied notifications, and you
@@ -183,96 +181,122 @@
 
   function toggleExpanded(newState = !expanded) {
     if (expanded !== newState) {
-      expanded = newState;
+      expanded = newState
       return new Promise((res) => {
         setTimeout(() => {
-          map.invalidateSize({ pan: false });
-          res(null);
-        }, 200);
-      });
+          map.invalidateSize({ pan: false })
+          res(null)
+        }, 200)
+      })
     }
   }
 
   function unfocusMarker() {
     if (selectedId) {
-      markers[selectedId]?.setIcon(createIcon(challenges[selectedId], false));
-      selectedId = undefined;
+      markers[selectedId]?.setIcon(createIcon(challenges[selectedId], false))
+      selectedId = undefined
     }
   }
 
   async function focusMarker(id: string) {
-    unfocusMarker();
-    selectedId = id;
-    await toggleExpanded(true);
-    const marker = markers[id];
+    unfocusMarker()
+    selectedId = id
+    await toggleExpanded(true)
+    const marker = markers[id]
     if (marker) {
-      map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 17));
-      marker.setIcon(createIcon(challenges[id], true));
+      map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 17))
+      marker.setIcon(createIcon(challenges[id], true))
     }
   }
 
   function getLocation() {
     if (DEBUG) {
-      map.on("contextmenu", (e) => {
-        currentCoord = [e.latlng.lat, e.latlng.lng];
-      });
+      map.on('contextmenu', (e) => {
+        currentCoord = [e.latlng.lat, e.latlng.lng]
+      })
     } else {
+      console.log('getting current location')
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition((position) => {
-          currentCoord = [position.coords.latitude, position.coords.longitude];
-        });
+          console.log('watch current location', position)
+          currentCoord = [position.coords.latitude, position.coords.longitude]
+        })
       } else {
-        alert("geolocation is not supported");
+        alert('geolocation is not supported')
       }
     }
   }
 
   $: if (currentCoord) {
-    posMarker.setLatLng(currentCoord);
+    posMarker.setLatLng(currentCoord)
 
     Object.entries(challenges).forEach(([id, challenge]) => {
       if (challenge.location) {
         markerDistances[id] = getDistanceFromLatLonInKm(
           challenge.location.coords,
           currentCoord
-        );
-        if (markerStates[id] === "locked" && markerDistances[id] < 0.1) {
-          markerStates[id] = "unlocked";
-          markers[id].setIcon(createIcon(challenge));
-          notifyChallenge(challenge);
+        )
+        if (markerStates[id] === 'locked' && markerDistances[id] < 0.1) {
+          markerStates[id] = 'unlocked'
+          markers[id].setIcon(createIcon(challenge))
+          notifyChallenge(challenge)
         }
       }
-    });
+    })
   }
 
   function markChallenge(challenge: Challenge) {
-    if (markerStates[challenge.id] === "done") {
-      markerStates[challenge.id] = "unlocked";
-    } else if (markerStates[challenge.id] === "unlocked") {
-      markerStates[challenge.id] = "done";
+    if (markerStates[challenge.id] === 'done') {
+      markerStates[challenge.id] = 'unlocked'
+    } else if (markerStates[challenge.id] === 'unlocked') {
+      markerStates[challenge.id] = 'done'
     }
 
-    console.log(markerStates[challenge.id]);
-    markers[challenge.id].setIcon(createIcon(challenge, true));
+    console.log(markerStates[challenge.id])
+    markers[challenge.id].setIcon(createIcon(challenge, true))
+  }
+
+  $: centerLocation = () => {
+    console.log('centerLocation')
+    if (currentCoord) {
+      console.log('centerLocation', 'flyTo', currentCoord)
+      map.flyTo(currentCoord)
+    } else {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log('centerLocation', 'flyTo', position)
+          currentCoord = [position.coords.latitude, position.coords.longitude]
+          map.flyTo(currentCoord)
+        })
+      } else {
+        alert('geolocation is not supported')
+      }
+    }
   }
 
   $: getDistanceText = (challenge: Challenge) => {
-    const distance = markerDistances[challenge.id];
+    const distance = markerDistances[challenge.id]
 
     if (!distance) {
-      return "";
+      return ''
     }
 
     if (distance > 1) {
-      return `${distance.toFixed(1)}km`;
+      return `${distance.toFixed(1)}km`
     }
 
-    return `${(distance * 1000).toFixed(0)}m`;
-  };
+    return `${(distance * 1000).toFixed(0)}m`
+  }
 </script>
 
 <main class="h-full flex flex-col md:flex-row">
-  <div id="map" class="flex-1 -mb-8 md:mb-0" />
+  <div id="map" class="relative flex-1 -mb-8 md:mb-0">
+    <div class="absolute top-8 right-8 z-[9999]">
+      <button on:click={centerLocation} class="bg-base-100 rounded">
+        <img src={positionIcon} alt="Current position" />
+      </button>
+    </div>
+  </div>
   <div
     class="relative {expanded
       ? 'h-[70vh]'
@@ -284,7 +308,7 @@
     >
       <span>Team challenges</span>
       <span class="transition md:hidden {expanded ? 'rotate-0' : 'rotate-180'}"
-        ><img src={downIcon} alt={expanded ? "Close" : "Open"} /></span
+        ><img src={downIcon} alt={expanded ? 'Close' : 'Open'} /></span
       >
     </button>
     <div class="flex shadow-md">
@@ -292,18 +316,18 @@
         class="text-sm transition p-2 flex-1 {tab === 'specific'
           ? 'border-accent font-bold'
           : 'border-base-300'} border-b-2 active:bg-base-200"
-        on:click={() => (tab = "specific")}>Specific locations</button
+        on:click={() => (tab = 'specific')}>Specific locations</button
       >
       <button
         class="text-sm transition p-2 flex-1 {tab === 'anywhere'
           ? 'border-accent font-bold'
           : 'border-base-300'} border-b-2 active:bg-base-200"
-        on:click={() => (tab = "anywhere")}>Do anywhere</button
+        on:click={() => (tab = 'anywhere')}>Do anywhere</button
       >
     </div>
     <div class="overflow-y-scroll">
       <ul class="flex flex-col">
-        {#if tab === "specific"}
+        {#if tab === 'specific'}
           {#each sortedLocationChallenges.map((id) => challenges[id]) as challenge}
             <li class="contents">
               <button
@@ -318,11 +342,11 @@
                     : 'opacity-100'}"
                 >
                   <div>
-                    {#if markerStates[challenge.id] === "locked"}
+                    {#if markerStates[challenge.id] === 'locked'}
                       <div class={lockedClass()}>
                         {challenge.name[0]}
                       </div>
-                    {:else if markerStates[challenge.id] === "unlocked"}
+                    {:else if markerStates[challenge.id] === 'unlocked'}
                       <div class={unlockedClass()}>
                         {challenge.name[0]}
                       </div>
@@ -333,9 +357,9 @@
                     {/if}
                   </div>
                   <div
-                    class={markerStates[challenge.id] === "done"
-                      ? "line-through"
-                      : ""}
+                    class={markerStates[challenge.id] === 'done'
+                      ? 'line-through'
+                      : ''}
                   >
                     {challenge.name}
                   </div>
@@ -365,9 +389,9 @@
                 on:click={() => focusMarker(challenge.id)}
               >
                 <div
-                  class={markerStates[challenge.id] === "done"
-                    ? "line-through"
-                    : ""}
+                  class={markerStates[challenge.id] === 'done'
+                    ? 'line-through'
+                    : ''}
                 >
                   {challenge.name}
                 </div>
@@ -386,6 +410,7 @@
       </ul>
     </div>
   </div>
+
   {#if selectedChallenge !== undefined}
     <div
       class="fixed bottom-0 left-0 right-0 h-[70vh] bg-base-100 rounded-t-2xl z-[9999] flex flex-col"
@@ -413,7 +438,7 @@
             : ''}"
         >
           {selectedChallenge.name}
-          {#if selectedState === "locked"}
+          {#if selectedState === 'locked'}
             <img src={lockIcon} alt="locked" />
           {/if}
         </h1>
@@ -430,7 +455,7 @@
           {/if}
         </h2>
         <div class="prose text-base-content">
-          {#if selectedState === "locked"}
+          {#if selectedState === 'locked'}
             <p>This is a locked challenge.</p>
             <p>
               Move closer to {selectedChallenge.location.name} to unlock the challenge
@@ -469,12 +494,12 @@
             >Get directions</a
           >
         {/if}
-        {#if selectedState !== "locked"}
+        {#if selectedState !== 'locked'}
           <label class="text-sm flex justify-between items-center mt-6 mb-10">
             Nailed it, cross it off my list!
             <input
               on:change={() => markChallenge(selectedChallenge)}
-              checked={selectedState === "done"}
+              checked={selectedState === 'done'}
               class="toggle toggle-secondary toggle-lg"
               type="checkbox"
             />
