@@ -182,6 +182,7 @@
   $: toggleExpanded = (newState = !expanded) => {
     console.log('toggleExpanded', expanded, newState)
     if (expanded !== newState) {
+      console.log('set expanded')
       expanded = newState
       return new Promise((res) => {
         setTimeout(() => {
@@ -221,7 +222,7 @@
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(
         (position) => {
-          currentCoord = [position.coords.latitude, position.coords.longitude]
+          // currentCoord = [position.coords.latitude, position.coords.longitude]
         },
         (error) => {
           alert(error.message)
