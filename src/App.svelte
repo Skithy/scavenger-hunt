@@ -23,7 +23,7 @@
   } from './data/stores'
   import Info from './Info.svelte'
 
-  const DEBUG = true
+  const DEBUG = false
 
   function createIcon(id: string, active = false) {
     const challenge = challenges[id]
