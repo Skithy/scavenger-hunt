@@ -219,10 +219,16 @@
 
     console.log('getting current location')
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition((position) => {
-        console.log('watch current location', position)
-        currentCoord = [position.coords.latitude, position.coords.longitude]
-      })
+      navigator.geolocation.watchPosition(
+        (position) => {
+          console.log('watch current location', position)
+          currentCoord = [position.coords.latitude, position.coords.longitude]
+        },
+        (error) => {
+          alert(error.message)
+        },
+        { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
+      )
     } else {
       alert('geolocation is not supported')
     }
@@ -264,11 +270,17 @@
       map.flyTo(currentCoord)
     } else {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          console.log('centerLocation', 'flyTo', position)
-          currentCoord = [position.coords.latitude, position.coords.longitude]
-          map.flyTo(currentCoord)
-        })
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log('centerLocation', 'flyTo', position)
+            currentCoord = [position.coords.latitude, position.coords.longitude]
+            map.flyTo(currentCoord)
+          },
+          (error) => {
+            alert(error.message)
+          },
+          { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
+        )
       } else {
         alert('geolocation is not supported')
       }
