@@ -222,7 +222,7 @@
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(
         (position) => {
-          // currentCoord = [position.coords.latitude, position.coords.longitude]
+          currentCoord = [position.coords.latitude, position.coords.longitude]
         },
         (error) => {
           alert(error.message)
@@ -247,7 +247,7 @@
         if (markerStates[id] === 'locked' && markerDistances[id] < 0.1) {
           markerStates[id] = 'unlocked'
           markers[id].setIcon(createIcon(challenge))
-          notifyChallenge(challenge)
+          // notifyChallenge(challenge)
         }
       }
     })
