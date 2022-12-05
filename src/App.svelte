@@ -268,20 +268,19 @@
     console.log('centerLocation')
     if (currentCoord) {
       map.flyTo(currentCoord)
+    }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          currentCoord = [position.coords.latitude, position.coords.longitude]
+        },
+        (error) => {
+          alert(error.message)
+        },
+        { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
+      )
     } else {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            currentCoord = [position.coords.latitude, position.coords.longitude]
-          },
-          (error) => {
-            alert(error.message)
-          },
-          { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
-        )
-      } else {
-        alert('geolocation is not supported')
-      }
+      alert('geolocation is not supported')
     }
   }
 
