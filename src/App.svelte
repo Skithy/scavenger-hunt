@@ -2,6 +2,7 @@
   import Leaflet from 'leaflet'
   import { onMount } from 'svelte'
   import positionIcon from './assets/icons/position.svg'
+  import questionIcon from './assets/icons/question.svg'
   import { challenges } from './data/challenges'
   import { getDistanceFromLatLonInKm } from './utils/getDistance'
   import Details from './Details.svelte'
@@ -20,6 +21,7 @@
     markerDistances,
     markerStates,
   } from './data/stores'
+  import Info from './Info.svelte'
 
   const DEBUG = true
 
@@ -48,10 +50,11 @@
   }, {})
 
   let selectedId: string | undefined
-
+  let info = false
   let map: Leaflet.Map
   let expanded = false
   let locationWatch: number | undefined = undefined
+  let locationError: string | undefined = undefined
 
   onMount(() => {
     map = Leaflet.map('map', {
@@ -63,6 +66,7 @@
       .setView([-33.85803526895217, 151.20859419563487], 16)
       .on('click', () => {
         unfocusMarker()
+        toggleHelp(false)
         toggleExpanded(false)
       })
 
@@ -91,6 +95,14 @@
     getLocation()
   })
 
+  async function toggleHelp(newState = !info) {
+    if (info !== newState) {
+      info = newState
+      return new Promise((res) => {
+        setTimeout(() => res(map.invalidateSize({ pan: false })), 200)
+      })
+    }
+  }
   async function toggleExpanded(newState = !expanded) {
     if (expanded !== newState) {
       expanded = newState
@@ -119,11 +131,12 @@
   }
 
   function getLocation() {
-    if (!navigator.geolocation) {
-      alert('geolocation is not supported')
+    if (locationWatch) {
+      return
     }
 
-    if (locationWatch) {
+    if (!navigator.geolocation) {
+      alert('geolocation is not supported')
       return
     }
 
@@ -133,7 +146,7 @@
         $currentAccuracy = position.coords.accuracy
       },
       (error) => {
-        alert(error.message)
+        locationError = error.message
       },
       { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
     )
@@ -158,7 +171,7 @@
 
   $: if ($currentAccuracy < 10) {
     posMarker.setIcon(hereIcon)
-  } else if ($currentAccuracy < 50) {
+  } else if ($currentAccuracy < 30) {
     posMarker.setIcon(hereYellowIcon)
   } else {
     posMarker.setIcon(hereLowIcon)
@@ -174,8 +187,11 @@
     markers[id].setIcon(createIcon(id, true))
   }
 
-  function centerLocation() {
+  async function centerLocation(e: Event) {
     getLocation()
+    e.stopPropagation()
+    unfocusMarker()
+    await toggleExpanded(false)
     if ($currentCoord) {
       map.flyTo($currentCoord)
     }
@@ -184,23 +200,36 @@
 
 <main class="h-full flex flex-col md:flex-row">
   <div id="map" class="relative flex-1 -mb-8 md:mb-0">
-    <div class="absolute top-8 right-8 z-[9999]">
+    <div class="absolute top-4 right-4 flex flex-col gap-y-2 z-[9999]">
       <button
-        on:click={centerLocation}
-        class="flex justify-center items-center bg-base-100 rounded"
+        on:click={(e) => {
+          e.stopPropagation()
+          toggleHelp()
+        }}
+        class="flex justify-center items-center h-11 w-11 bg-base-100 rounded-full shadow-md"
       >
-        <img src={positionIcon} alt="Current position" />
+        <img src={questionIcon} alt="Info" />
       </button>
-      {#if $currentAccuracy}
-        <div>
-          Accuracy: {$currentAccuracy.toFixed(2)}
-        </div>
-      {/if}
+      <div
+        class="{locationError && 'tooltip'} tooltip-left tooltip-error"
+        data-tip={locationError}
+      >
+        <button
+          on:click={centerLocation}
+          class="flex justify-center items-center h-11 w-11 {locationError
+            ? 'bg-error'
+            : 'bg-base-100'} rounded-full shadow-md"
+        >
+          <img src={positionIcon} alt="Current position" />
+        </button>
+      </div>
     </div>
   </div>
   <Sidebar {toggleExpanded} {expanded} {focusMarker} />
 
-  {#if selectedId !== undefined}
+  {#if info}
+    <Info onClose={() => toggleHelp(false)} />
+  {:else if selectedId !== undefined}
     <Details
       challengeId={selectedId}
       onClose={unfocusMarker}

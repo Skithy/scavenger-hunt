@@ -39,5 +39,5 @@ export const hereYellowIcon = Leaflet.divIcon({
 })
 
 export const hereLowIcon = Leaflet.divIcon({
-  className: `bg-critical ${hereClass}`,
+  className: `bg-error ${hereClass}`,
 })
