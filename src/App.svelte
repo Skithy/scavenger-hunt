@@ -221,7 +221,6 @@
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(
         (position) => {
-          console.log('watch current location', position)
           currentCoord = [position.coords.latitude, position.coords.longitude]
         },
         (error) => {
@@ -235,6 +234,7 @@
   }
 
   $: if (currentCoord) {
+    console.log('currentCoord', currentCoord)
     posMarker.setLatLng(currentCoord)
 
     Object.entries(challenges).forEach(([id, challenge]) => {
@@ -266,15 +266,12 @@
   $: centerLocation = () => {
     console.log('centerLocation')
     if (currentCoord) {
-      console.log('centerLocation', 'flyTo', currentCoord)
       map.flyTo(currentCoord)
     } else {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            console.log('centerLocation', 'flyTo', position)
             currentCoord = [position.coords.latitude, position.coords.longitude]
-            map.flyTo(currentCoord)
           },
           (error) => {
             alert(error.message)
@@ -319,7 +316,7 @@
       class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200 md:active:bg-base-100 md:cursor-default"
       on:click={() => toggleExpanded()}
     >
-      <span>Team challenges</span>
+      <span>Team challenges {expanded ? 'Open' : 'Close'}</span>
       <span class="transition md:hidden {expanded ? 'rotate-0' : 'rotate-180'}"
         ><img src={downIcon} alt={expanded ? 'Close' : 'Open'} /></span
       >
