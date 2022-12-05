@@ -67,6 +67,16 @@
     className: 'bg-info !h-4 !w-4 rounded-full shadow-md border-2 border-white',
   })
 
+  const hereYellowIcon = Leaflet.divIcon({
+    className:
+      'bg-warning !h-4 !w-4 rounded-full shadow-md border-2 border-white',
+  })
+
+  const hereLowIcon = Leaflet.divIcon({
+    className:
+      'bg-critical !h-4 !w-4 rounded-full shadow-md border-2 border-white',
+  })
+
   const lockedClass = (active = false) =>
     `${markerClass(active)} bg-secondary text-secondary-content`
   const lockedIcon = (challenge: Challenge, active = false) =>
@@ -153,9 +163,7 @@
   })
 
   $: toggleExpanded = (newState = !expanded) => {
-    console.log('toggleExpanded', expanded, newState)
     if (expanded !== newState) {
-      console.log('set expanded')
       expanded = newState
       return new Promise((res) => {
         setTimeout(() => {
@@ -196,6 +204,13 @@
         locationWatch = navigator.geolocation.watchPosition(
           (position) => {
             currentCoord = [position.coords.latitude, position.coords.longitude]
+            if (position.coords.accuracy < 10) {
+              posMarker.setIcon(hereIcon)
+            } else if (position.coords.accuracy < 50) {
+              posMarker.setIcon(hereYellowIcon)
+            } else {
+              posMarker.setIcon(hereLowIcon)
+            }
           },
           (error) => {
             alert(error.message)
