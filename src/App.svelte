@@ -275,7 +275,7 @@
       class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200 md:active:bg-base-100 md:cursor-default"
       on:click={() => toggleExpanded()}
     >
-      <span>Team challenges {expanded ? 'Open' : 'Close'}</span>
+      <span>Team challenges</span>
       <span class="transition md:hidden {expanded ? 'rotate-0' : 'rotate-180'}"
         ><img src={downIcon} alt={expanded ? 'Close' : 'Open'} /></span
       >
