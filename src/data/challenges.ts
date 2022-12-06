@@ -126,7 +126,7 @@ Three tasks:
       link: 'https://goo.gl/maps/rJ4oay17VLcJAj6Z6',
     },
     name: '8 flags',
-    description: 'Take a photo of 8 flags in one shot.',
+    description: 'Can you spot them? Take a photo of 8 flags in one shot.',
     points: '1',
     photo: mcaCafe,
   },
@@ -209,6 +209,29 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
     points: '3',
     photo: ampForecourt,
   },
+  argyle: {
+    id: 'argyle',
+    name: 'Portrait of the year',
+    location: {
+      coords: [-33.85881380387812, 151.20727299120992],
+      name: 'Argyle Stairs',
+      link: 'https://goo.gl/maps/dehKvoxV6VApejXdA',
+    },
+    description:
+      'Pose for a team photo on the stairs. Most creative pic gets bonus points.',
+    points: '1',
+  },
+  stairs: {
+    id: 'stairs',
+    name: 'Going up',
+    location: {
+      coords: [-33.85900484100437, 151.20676620552234],
+      name: 'Bridge Stairs',
+      link: 'https://goo.gl/maps/BJzQaodxPqQ3FCA5A',
+    },
+    description: 'Here’s an easy one. How many steps to the top of the stairs?',
+    points: '1',
+  },
   /** Global */
   steal: {
     id: 'steal',
@@ -216,7 +239,7 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
     description: `
 Take photos of other teams without them noticing, and you’ll get one of their points.
 
-Remember, it works both ways! Keep a lookout for other teams taking your photo.`,
+Remember, it works both ways. Keep a lookout for other teams taking your photo!`,
     points: '1*',
   },
   performer: {
@@ -249,6 +272,13 @@ Take two snaps:
       'Let your inner artist shine! Send us the most creative photo that you come up with. Best photo wins bonus points.',
     points: '2',
   },
+  christmas: {
+    id: 'christmas',
+    name: 'Take a Christmassy photo',
+    description:
+      'Discovered the magic of Christmas along your route? Capture your gang’s Christmas spirit to earn another point.',
+    points: '1',
+  },
 }
 
 export const locationChallenges: string[] = [
@@ -273,4 +303,5 @@ export const anywhereChallenges: string[] = [
   'tourist',
   'boat',
   'creative',
+  'christmas',
 ]

@@ -101,7 +101,7 @@
     {/if}
     {#if state !== 'locked'}
       <label class="text-sm flex justify-between items-center mt-6 mb-10">
-        Nailed it, cross it off my list!
+        Nailed it. Cross it off my list!
         <input
           on:change={() => completeChallenge()}
           checked={state === 'done'}
