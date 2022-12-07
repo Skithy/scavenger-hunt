@@ -6,6 +6,8 @@
   import cameraIcon from './assets/icons/camera.svg'
   import cupIcon from './assets/icons/cup.svg'
   import clockIcon from './assets/icons/clock.svg'
+  import chatIcon from './assets/icons/chat.svg'
+  import videoIcon from './assets/icons/video.svg'
   import { renderer } from './utils/markdown'
   import { challenges } from './data/challenges'
   import { marked } from 'marked'
@@ -74,14 +76,29 @@
       <li class="flex gap-x-2">
         <img src={cupIcon} alt="Points" />
         <span>
-          Earn {challenge.points} point
+          {#if challenge.points}
+            Earn {challenge.points} point{challenge.points > 1 ? 's' : ''}
+          {:else}
+            Earn 1 point per photo
+          {/if}
         </span>
       </li>
-      <li class="flex gap-x-2">
-        <img src={cameraIcon} alt="Proof" />
-        <span>Upload proof to your Slack channel</span>
-      </li>
-      {#if challenge.timeLocked}
+      {#if challenge.scoring === 'photo'}
+        <li class="flex gap-x-2">
+          <img src={cameraIcon} alt="Proof" />
+          <span>Upload photos to your Slack channel</span>
+        </li>
+      {:else if challenge.scoring === 'video'}
+        <li class="flex gap-x-2">
+          <img src={videoIcon} alt="Video" />
+          <span>Upload video to your Slack channel</span>
+        </li>
+      {:else if challenge.scoring === 'answer'}
+        <li class="flex gap-x-2">
+          <img src={chatIcon} alt="Time limit" />
+          <span>Share answer in your Slack channel</span>
+        </li>
+      {:else if challenge.scoring === 'manned'}
         <li class="flex gap-x-2">
           <img src={clockIcon} alt="Time limit" />
           <span>Activity closes at <b>5.15pm</b></span>
@@ -110,11 +127,11 @@
         />
       </label>
     {/if}
-    {#if challenge.photo}
+    {#if challenge.location}
       <div class="overflow-hidden rounded-lg pb-4">
         <img
           class="w-full"
-          src={challenge.photo}
+          src={challenge.location.photo}
           alt={challenge.location.name}
         />
       </div>
