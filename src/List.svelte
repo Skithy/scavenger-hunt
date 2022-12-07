@@ -64,8 +64,7 @@
                 src={cupIcon}
                 alt="Points"
                 class="inline h-4 w-4 align-bottom"
-              />
-              {challenge.points}
+              />{' '}{challenge.points ?? 'Many'}
             </div>
           </div>
         </button>

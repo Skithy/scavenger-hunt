@@ -13,6 +13,7 @@ import rocksMarket from '../assets/photos/rocks-market.png'
 import susannahPlace from '../assets/photos/susannah-place.png'
 import argyle from '../assets/photos/argyle.png'
 import bridge from '../assets/photos/bridge.png'
+import { sortBy } from 'lodash'
 
 export type State = 'locked' | 'unlocked' | 'done'
 export const challengeOrder: State[] = ['unlocked', 'locked', 'done']
@@ -310,29 +311,10 @@ Snap a team selfie for bonus points.
   },
 }
 
-export const locationChallenges: string[] = [
-  'convict',
-  'house',
-  'tower',
-  'argyle',
-  'stairs',
-  'zodiac',
-  'copycat',
-  'flags',
-  'jump',
-  'dance',
-  'feast',
-  'icecream',
-  'scout',
-  'criminal',
-  'grammy',
-]
-
-export const anywhereChallenges: string[] = [
-  'steal',
-  'performer',
-  'tourist',
-  'boat',
-  'creative',
-  'christmas',
-]
+export const locationChallenges: string[] = sortBy(
+  Object.values(challenges).filter((c) => c.location),
+  (c) => c.name
+).map((c) => c.id)
+export const anywhereChallenges: string[] = Object.values(challenges)
+  .filter((c) => !c.location)
+  .map((c) => c.id)
