@@ -312,20 +312,20 @@ Snap a team selfie for bonus points.
 
 export const locationChallenges: string[] = [
   'convict',
-  'tower',
   'house',
-  'icecream',
-  'jump',
+  'argyle',
+  'tower',
+  'stairs',
+  'zodiac',
   'copycat',
   'flags',
-  'zodiac',
-  'feast',
+  'jump',
   'dance',
+  'feast',
+  'icecream',
+  'scout',
   'criminal',
   'grammy',
-  'scout',
-  'argyle',
-  'stairs',
 ]
 
 export const anywhereChallenges: string[] = [
