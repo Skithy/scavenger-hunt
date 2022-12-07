@@ -49,6 +49,7 @@
     return total
   }, {})
 
+  const mapMode = new URLSearchParams(location.search).get('map')
   let selectedId: string | undefined
   let info = false
   let map: Leaflet.Map
@@ -228,7 +229,9 @@
       </div>
     </div>
   </div>
-  <Sidebar {toggleExpanded} {expanded} {focusMarker} />
+  {#if !mapMode}
+    <Sidebar {toggleExpanded} {expanded} {focusMarker} />
+  {/if}
 
   {#if info}
     <Info onClose={() => toggleHelp(false)} />

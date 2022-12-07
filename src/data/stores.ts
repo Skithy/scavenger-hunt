@@ -7,6 +7,12 @@ export const currentAccuracy = writable<number | undefined>(undefined)
 
 export const markerStates = writable<Record<string, State>>(
   Object.entries(challenges).reduce((total, [id, challenge]) => {
+    let mapMode = new URLSearchParams(location.search).get('map')
+    if (mapMode) {
+      total[id] = 'unlocked'
+      return total
+    }
+
     let state = localStorage.getItem(id)
     if (!state) {
       state = challenge.location ? 'locked' : 'unlocked'
