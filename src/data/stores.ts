@@ -7,7 +7,13 @@ export const currentAccuracy = writable<number | undefined>(undefined)
 
 export const markerStates = writable<Record<string, State>>(
   Object.entries(challenges).reduce((total, [id, challenge]) => {
-    total[id] = challenge.location ? 'locked' : 'unlocked'
+    let state = localStorage.getItem(id)
+    if (!state) {
+      state = challenge.location ? 'locked' : 'unlocked'
+    }
+
+    total[id] = state
+    localStorage.setItem(id, state)
     return total
   }, {})
 )

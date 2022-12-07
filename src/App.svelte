@@ -27,7 +27,7 @@
 
   function createIcon(id: string, active = false) {
     const challenge = challenges[id]
-    switch ($markerStates[challenge.id]) {
+    switch ($markerStates[id]) {
       case 'done':
         return doneIcon(active)
       case 'locked':
@@ -164,6 +164,7 @@
         )
         if ($markerStates[id] === 'locked' && $markerDistances[id] < 0.1) {
           $markerStates[id] = 'unlocked'
+          localStorage.setItem(id, $markerStates[id])
           markers[id].setIcon(createIcon(id))
         }
       }
@@ -185,6 +186,7 @@
       $markerStates[id] = 'done'
     }
 
+    localStorage.setItem(id, $markerStates[id])
     markers[id].setIcon(createIcon(id, true))
   }
 
