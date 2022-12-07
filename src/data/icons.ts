@@ -2,10 +2,12 @@ import Leaflet from 'leaflet'
 import tickIcon from '../assets/icons/tick.svg'
 import type { Challenge } from './challenges'
 
+const mapMode = new URLSearchParams(location.search).get('map')
 const activeClass = 'ring-info ring-4 !z-[300]'
 
-const markerClass =
-  '!h-8 !w-8 rounded-full !flex items-center justify-center !font-bold !text-md shadow-md'
+const markerClass = `${
+  mapMode ? '!h-10 !w-10 !text-xl' : '!h-8 !w-8 !text-md'
+} rounded-full !flex items-center justify-center !font-bold shadow-md`
 
 export const lockedClass = `${markerClass} bg-secondary text-secondary-content`
 export const lockedIcon = (challenge: Challenge, active = false) =>

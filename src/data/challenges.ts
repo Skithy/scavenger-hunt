@@ -93,7 +93,7 @@ Three tasks:
       link: 'https://goo.gl/maps/qUxEdetmivejGz1G8',
       photo: messina,
     },
-    name: 'Enjoy a free ice cream',
+    name: 'Ice cream, yeah!',
     description:
       'The hardest challenge of all. Enjoy a free ice cream or drink on us! Check your kit for the $$',
     points: 1,
@@ -180,7 +180,7 @@ Bonus points if your team chooses a Zodiac animal that no other team has chosen.
       link: 'https://goo.gl/maps/bYTLykpcSt7gU49v8',
       photo: justiceAndPoliceMuseum,
     },
-    name: `It's mug shot time`,
+    name: `Mug shot time`,
     description: 'Take a team selfie with a gangster.',
     points: 1,
     scoring: 'photo',

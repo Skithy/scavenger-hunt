@@ -23,7 +23,7 @@
   } from './data/stores'
   import Info from './Info.svelte'
 
-  const DEBUG = false
+  const debugMode = new URLSearchParams(location.search).get('debug')
 
   function createIcon(id: string, active = false) {
     const challenge = challenges[id]
@@ -86,7 +86,7 @@
       }
     })
 
-    if (DEBUG) {
+    if (debugMode) {
       map.on('contextmenu', (e) => {
         $currentCoord = [e.latlng.lat, e.latlng.lng]
         $currentAccuracy = 0
