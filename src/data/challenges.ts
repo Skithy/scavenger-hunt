@@ -313,8 +313,8 @@ Snap a team selfie for bonus points.
 export const locationChallenges: string[] = [
   'convict',
   'house',
-  'argyle',
   'tower',
+  'argyle',
   'stairs',
   'zodiac',
   'copycat',
