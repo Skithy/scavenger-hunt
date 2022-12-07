@@ -113,21 +113,34 @@
     }
   }
 
-  async function focusMarker(id: string) {
-    unfocusMarker()
-    selectedId = id
-    await toggleExpanded(true)
-    const marker = markers[id]
-    if (marker) {
-      marker.setIcon(createIcon(id, true))
-      map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 17))
+  function focusMarker(id: string) {
+    if (selectedId) {
+      history.replaceState({ id }, '', '/#' + id)
+    } else {
+      history.pushState({ id }, '', '/#' + id)
     }
+    onHashChange()
   }
 
   function unfocusMarker() {
     if (selectedId) {
+      history.back()
+    }
+  }
+
+  async function onHashChange() {
+    if (selectedId) {
       markers[selectedId]?.setIcon(createIcon(selectedId, false))
-      selectedId = undefined
+    }
+
+    selectedId = location.hash ? location.hash.slice(1) : undefined
+    if (selectedId) {
+      await toggleExpanded(true)
+      const marker = markers[selectedId]
+      if (marker) {
+        marker.setIcon(createIcon(selectedId, true))
+        map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 17))
+      }
     }
   }
 
@@ -201,6 +214,8 @@
     }
   }
 </script>
+
+<svelte:window on:popstate={onHashChange} />
 
 <main class="h-full flex flex-col md:flex-row">
   <div id="map" class="relative flex-1 -mb-8 md:mb-0">
