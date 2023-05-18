@@ -20,7 +20,7 @@
 </script>
 
 <div
-  class="fixed bottom-0 left-0 md:max-w-lg h-[70vh] bg-base-100 rounded-t-2xl z-[9999] flex flex-col md:border-4 border-base-300"
+  class="fixed bottom-0 left-0 md:left-6 md:max-w-lg h-[70vh] bg-base-100 rounded-t-2xl z-[9999] flex flex-col md:border-4 border-base-300"
   in:fly={{
     y: 1000,
     opacity: 1,
