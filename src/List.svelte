@@ -21,7 +21,7 @@
   }
 </script>
 
-<div class="overflow-y-scroll">
+<div class="overflow-y-auto">
   <ul class="flex flex-col">
     {#each challenges as challenge}
       <li class="contents">

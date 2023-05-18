@@ -17,10 +17,10 @@
 <div
   class="relative {expanded
     ? 'h-[70vh]'
-    : 'h-16'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-200 overflow-hidden"
+    : 'h-16'} md:h-full md:w-96 flex flex-col rounded-t-2xl z-[1100] bg-base-100 shadow-md transition-[height] duration-200 overflow-hidden md:rounded-none"
 >
   <button
-    class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200 md:active:bg-base-100 md:cursor-default border-b-2 border-base-300"
+    class="transition px-4 pt-6 pb-4 flex justify-between active:bg-base-200 md:active:bg-base-100 md:cursor-default border-b-4 border-base-300"
     on:click={() => toggleExpanded()}
   >
     <span>2023 Vivid Light Walk</span>

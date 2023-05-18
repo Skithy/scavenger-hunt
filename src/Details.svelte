@@ -20,7 +20,7 @@
 </script>
 
 <div
-  class="fixed bottom-0 left-0 right-0 h-[70vh] bg-base-100 rounded-t-2xl z-[9999] flex flex-col"
+  class="fixed bottom-0 right-0 md:max-w-lg h-[70vh] bg-base-100 rounded-t-2xl z-[9999] flex flex-col md:border-4 border-base-300"
   in:fly={{
     y: 1000,
     opacity: 1,
@@ -38,7 +38,7 @@
     class="px-3 py-4 flex w-full transition active:bg-base-200"
     on:click={onClose}><img src={leftIcon} alt="Back" /></button
   >
-  <div class="overflow-y-scroll px-4">
+  <div class="overflow-y-auto px-4">
     <h1
       class="text-lg flex items-center gap-x-2 {state === 'done' &&
         'line-through'}"
