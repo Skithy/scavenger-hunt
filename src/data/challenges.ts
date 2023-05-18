@@ -1,26 +1,9 @@
-import ampForecourt from '../assets/photos/amp-forecourt.png'
-import blighBarneyReserve from '../assets/photos/bligh-barney-reserve.png'
-import firstFleetPark from '../assets/photos/first-fleet-park.png'
-import foundationPark from '../assets/photos/foundation-park.png'
-import justiceAndPoliceMuseum from '../assets/photos/justice-and-police-museum.png'
-import mcaCafe from '../assets/photos/mca-cafe.png'
-import mcaForecourt from '../assets/photos/mca-forecourt.png'
-import mca from '../assets/photos/mca.png'
-import memoryIsCreationWithoutEnd from '../assets/photos/memory-is-creation-without-end.png'
-import messina from '../assets/photos/messina.png'
-import observatoryHill from '../assets/photos/observatory-hill.png'
-import rocksMarket from '../assets/photos/rocks-market.png'
-import susannahPlace from '../assets/photos/susannah-place.png'
-import argyle from '../assets/photos/argyle.png'
-import bridge from '../assets/photos/bridge.png'
-import { sortBy } from 'lodash'
-
 export type State = 'locked' | 'unlocked' | 'done'
 export const challengeOrder: State[] = ['unlocked', 'locked', 'done']
 
 export type Challenge = {
   id: string
-  location?: {
+  location: {
     coords: [number, number]
     name: string
     link: string
@@ -28,293 +11,131 @@ export type Challenge = {
   }
   name: string
   description: string
-  points: number | null
-  scoring: 'photo' | 'video' | 'answer' | 'manned'
+  link?: string
+  cinewavLink?: string
 }
 
 export const challenges: Record<string, Challenge> = {
-  /** Local */
-  convict: {
-    id: 'convict',
+  sonder: {
+    id: 'sonder',
     location: {
-      coords: [-33.85783831563544, 151.20870355471794],
-      name: 'The Rocks Market',
-      link: 'https://goo.gl/maps/FVpLztKbFBBJBgZA8',
-      photo: rocksMarket,
+      coords: [-33.861453, 151.211636],
+      name: 'Circular Quay and the Rocks',
+      link: 'https://goo.gl/maps/P74xU4KYry3ACrUG9',
+      photo:
+        'https://www.vividsydney.com/sites/default/files/styles/original_compressed/public/2023-02/sonder-1900x900.jpg?itok=0CPGGU3G',
     },
-    name: 'Early settlers',
-    description:
-      'Find the sandy trio and show us your best impression of a weary convict.',
-    points: 1,
-    scoring: 'photo',
-  },
-  tower: {
-    id: 'tower',
-    location: {
-      coords: [-33.85913981928262, 151.20921873974578],
-      name: 'Bligh & Barney Reserve',
-      link: 'https://goo.gl/maps/XQ4B4bVstaUZZFb39',
-      photo: blighBarneyReserve,
-    },
-    name: 'Faulty towers',
+    name: 'Sonder',
     description: `
-Build a spaghetti tower in 5 minutes.
-      
-Earn 1 point for each achievement:
-- it stands up for at least 10 seconds
-- is at least 3 spaghettis tall
+Named after the profound realisation that every stranger you see has a rich, complex inner life, *Sonder* celebrates the colourful worlds within us all and what happens when they interconnect.
 
-Highest tower gets bonus points.`,
-    points: 2,
-    scoring: 'manned',
+A set of beacons made of LED tubes reach up to the Circular Quay station's rooftop, their lines curving to make a transfixing ceiling of light above our heads.`,
+    link: 'https://www.vividsydney.com/event/light/sonder',
   },
-  house: {
-    id: 'house',
+  insideOut: {
+    id: 'insideOut',
     location: {
-      coords: [-33.85829707395864, 151.20801120391684],
-      name: 'Foundation Park',
-      link: 'https://goo.gl/maps/r9DiHFKWTmpUKztd7',
-      photo: foundationPark,
+      coords: [-33.862196, 151.210853],
+      name: 'Customs House',
+      link: 'https://goo.gl/maps/TDoDPzV9vPvsrTBp8',
+      photo:
+        'https://www.vividsydney.com/sites/default/files/styles/original_compressed/public/2023-03/inside-out-1900x900_0.jpg?itok=RBPKeR2q',
     },
-    name: 'House call',
+    name: 'Inside Out',
     description: `
-Three tasks:
-1. What items are on the dresser?
-2. Take a team photo by the fire.
-3. Take a photo of the creepiest room you can find. Creepiest photo gets bonus points.`,
-    points: 1,
-    scoring: 'photo',
+A celebration of Australian interior design featuring beautiful hand-drawn wallpaper and fabrics by Florence Broadhurst projected onto the façade of Customs House – bringing the inside, out!
+`,
+    link: 'https://www.vividsydney.com/event/light/inside-out',
+    cinewavLink: 'https://cinewav.page.link/nxqf',
   },
-  icecream: {
-    id: 'icecream',
+  losting: {
+    id: 'losting',
     location: {
-      coords: [-33.86175629580389, 151.20973598544367],
-      name: 'Messina',
-      link: 'https://goo.gl/maps/qUxEdetmivejGz1G8',
-      photo: messina,
+      coords: [-33.86127, 151.209162],
+      name: 'Circular Quay and the Rocks',
+      link: 'https://goo.gl/maps/nmUBKXuUGryQ4mXR8',
+      photo:
+        'https://www.vividsydney.com/sites/default/files/styles/original_compressed/public/events/1yRlD_0nnhmzCvinwI2s_rgKPese0S20i.jpeg?itok=M8ajdDm9',
     },
-    name: 'Ice cream, yeah!',
-    description:
-      'The hardest challenge of all. Enjoy a free ice cream or drink on us! Check your kit for the $$',
-    points: 1,
-    scoring: 'photo',
+    name: 'Losting',
+    description: `
+'Losting' is an invented word, describing that deliberate act of losing yourself in nature without any bearings or ties to our tech, in order to feel yourself anew.
+
+
+A jungle contained in a cube of double-mirrors, Losting is a portal into a strange, ever-shifting world as its mirrors oscillate between transparent and reflective, illuminated and dark.
+
+
+Lose yourself in this otherworldly landscape, as it contracts, expands and changes constantly in front of our own eyes. Confusing and mesmerising in equal measure, Losting has no ending and no beginning, a mirage in the middle of Vivid Sydney.
+
+
+Are you ready to be lost - and, more pivotally, to see what you might find?`,
+    link: 'https://www.vividsydney.com/event/light/losting',
   },
-  jump: {
-    id: 'jump',
+  barerarerungar: {
+    id: 'barerarerungar',
     location: {
-      coords: [-33.859130348828415, 151.20498740923128],
-      name: 'Observatory Hill',
-      link: 'https://goo.gl/maps/Skt5w7hHj382N3zv5',
-      photo: observatoryHill,
-    },
-    name: 'Space Jam',
-    description:
-      'Jump higher than Jordan and shoot for the stars! Get a team pic of everyone airborne. No points if anyone is touching the ground.',
-    points: 3,
-    scoring: 'photo',
-  },
-  copycat: {
-    id: 'copycat',
-    location: {
-      coords: [-33.85992717236538, 151.20902509839397],
+      coords: [-33.859945, 151.209023],
       name: 'Museum of Contemporary Art',
-      link: 'https://goo.gl/maps/wmCrc2GV2pPWajcu8',
-      photo: mca,
+      link: 'https://goo.gl/maps/cUNW3X4rCwjy13fq6',
+      photo:
+        'https://www.vividsydney.com/sites/default/files/styles/original_compressed/public/events/1Y2JB675qgHnPni02cGkudhqPb3sx84-Z_0.png?itok=9_Dy61wo',
     },
-    name: 'Copy cat',
+    name: 'Barerarerungar',
     description: `
-Head to Level 1 and find the artwork that captures matching poses. 
+Barerarerungar means 'Country' in Boonwurrung, a language from Kulin Nation, where Maree Clarke lives. It draws from the artist's three decades of reclaiming and resurfacing south-east First Nations art and cultural practices. From the MCA façade, overlooking Sydney Harbour, she features river reeds, a symbol representing safe travels and friendship.
 
-Capture your team doing matching poses and share it with us.
-    `,
-    points: 2,
-    scoring: 'photo',
-  },
-  flags: {
-    id: 'flags',
-    location: {
-      coords: [-33.85967253800222, 151.20921908762242],
-      name: 'MCA Cafe',
-      link: 'https://goo.gl/maps/rJ4oay17VLcJAj6Z6',
-      photo: mcaCafe,
-    },
-    name: '8 flags',
-    description: 'Can you spot them? Take a photo of 8 flags in one shot.',
-    points: 1,
-    scoring: 'photo',
-  },
-  zodiac: {
-    id: 'zodiac',
-    location: {
-      coords: [-33.859603355862205, 151.20947615269063],
-      name: 'MCA forecourt',
-      link: 'https://goo.gl/maps/vLKGEZyYwcWghceZ7',
-      photo: mcaForecourt,
-    },
-    name: 'Year of the Tiger',
-    description: `
-As a team, pose as your favourite Chinese zodiac animal, in front of Lindy Lee’s sculpture, *Secret World of a Starlight Ember*.
 
-Bonus points if your team chooses a Zodiac animal that no other team has chosen.`,
-    points: 2,
-    scoring: 'photo',
+This multi-disciplinary Yorta Yorta/Wamba Wamba/Mutti Mutti/Boonwurrung artist is collaborating with building projection specialist The Electric Canvas to transform the façade of the Museum of Contemporary Art Australia. River reeds stand tall, referencing her famed oversized River Reed necklaces – a communal practice that often sees Maree congregate with family to collect, soak, dye and dry the raw materials from their natural environment. This impressive, stunning projection pays tribute to practices on Country, while also creating a space for communal reflection at the heart of Vivid Sydney.`,
+    link: 'https://www.vividsydney.com/event/light/barerarerungar',
+    cinewavLink: 'https://cinewav.page.link/EK5c',
   },
-  feast: {
-    id: 'feast',
+  sails: {
+    id: 'sails',
     location: {
-      coords: [-33.8608043691319, 151.20911977033663],
-      name: 'First Fleet Park',
-      link: 'https://goo.gl/maps/Ep13PDQRuGWe4PXc7',
-      photo: firstFleetPark,
+      coords: [-33.85668636783084, 151.21533961354592],
+      name: 'Sydney Opera House',
+      link: 'https://goo.gl/maps/PjiajsvYG1RkBK5H9',
+      photo:
+        'https://www.vividsydney.com/sites/default/files/styles/original_compressed/public/2023-03/Vivid_SOH_Sydney_Sun_1900x900.jpg?itok=95rHw3A2',
     },
-    name: 'Tastes like Australia',
-    description: `Enjoy a well-loved Aussie favourite for your arvo snack. They’re small in size but pack a punch.`,
-    points: 1,
-    scoring: 'manned',
-  },
-  criminal: {
-    id: 'criminal',
-    location: {
-      coords: [-33.86201488638533, 151.21231129103194],
-      name: 'Justice and Police Museum',
-      link: 'https://goo.gl/maps/bYTLykpcSt7gU49v8',
-      photo: justiceAndPoliceMuseum,
-    },
-    name: `Mug shot time`,
-    description: 'Take a team selfie with a gangster.',
-    points: 1,
-    scoring: 'photo',
-  },
-  grammy: {
-    id: 'grammy',
-    location: {
-      coords: [-33.861298860180725, 151.21364714072686],
-      name: 'Memory is Creation without End',
-      link: 'https://goo.gl/maps/pSNy6EcpzDscL3V1A',
-      photo: memoryIsCreationWithoutEnd,
-    },
-    name: 'And the Grammy goes to...',
-    description:
-      'Pretend you’re in a band. Pose for your new album cover and tell us the genre and band name.',
-    points: 3,
-    scoring: 'photo',
-  },
-  dance: {
-    id: 'dance',
-    location: {
-      coords: [-33.86015139708767, 151.20741046830878],
-      name: 'Susannah Place',
-      link: 'https://goo.gl/maps/VkgEyhuEGNV51M2D7',
-      photo: susannahPlace,
-    },
-    name: 'Dance battle',
-    description:
-      'Get ready for tonight’s dancefloor. Show us your moves by recreating this [tiktok dance](https://www.tiktok.com/@thebrandonwarr/video/6805026774775385349). Best video gets bonus points.',
-    points: 3,
-    scoring: 'video',
-  },
-  scout: {
-    id: 'scout',
-    location: {
-      coords: [-33.861757115149274, 151.21167693399258],
-      name: 'Alfred St',
-      link: 'https://goo.gl/maps/Wpy7Mj2tvKu6EuMu8',
-      photo: ampForecourt,
-    },
-    name: `Blowin’ in the wind`,
-    description:
-      'Beneath the compass, lies a pyramid. In which direction will it be found?',
-    points: 2,
-    scoring: 'answer',
-  },
-  argyle: {
-    id: 'argyle',
-    name: 'Portrait of the year',
-    location: {
-      coords: [-33.85881380387812, 151.20727299120992],
-      name: 'Argyle Stairs',
-      link: 'https://goo.gl/maps/dehKvoxV6VApejXdA',
-      photo: argyle,
-    },
-    description:
-      'Pose for a team photo on the stairs. Most creative pic gets bonus points.',
-    points: 1,
-    scoring: 'photo',
-  },
-  stairs: {
-    id: 'stairs',
-    name: 'Going up',
-    location: {
-      coords: [-33.85900484100437, 151.20676620552234],
-      name: 'Bridge Stairs',
-      link: 'https://goo.gl/maps/BJzQaodxPqQ3FCA5A',
-      photo: bridge,
-    },
-    description: 'Here’s an easy one. How many steps to the top of the stairs?',
-    points: 1,
-    scoring: 'answer',
-  },
-  /** Global */
-  steal: {
-    id: 'steal',
-    name: 'Steal some points mwahahahah!',
+    name: 'Lighting of the Sails: Life Enlivened',
     description: `
-Take photos of other teams without them noticing, and you’ll get one of their points.
+The late Australian artist John Olsen's vibrant paintings of life and energy within the natural world illuminates the Sydney Opera House’s sails in 2023 as part of Vivid Sydney.
 
-Remember, it works both ways. Keep a lookout for other teams taking your photo!`,
-    points: null,
-    scoring: 'photo',
-  },
-  performer: {
-    id: 'performer',
-    name: 'Take a selfie with a street performer',
-    description: 'Remember to thank them with a tip! Check your kit for the $$',
-    points: 1,
-    scoring: 'photo',
-  },
-  tourist: {
-    id: 'tourist',
-    name: 'Photobomb a tourist pic',
-    description:
-      'Leave a lasting impression in someone else’s photo. Remember to share your photographic evidence with us!',
-    points: 1,
-    scoring: 'photo',
-  },
-  boat: {
-    id: 'boat',
-    name: 'Snap some seafaring vessels',
-    description: `
-Take two snaps:
-1. Biggest seafaring vessel
-2. Smallest seafaring vessel`,
-    points: 2,
-    scoring: 'photo',
-  },
-  creative: {
-    id: 'creative',
-    name: 'Creative photo contest',
-    description:
-      'Let your inner artist shine! Send us the most creative photo that you come up with. Best photo wins bonus points.',
-    points: 2,
-    scoring: 'photo',
-  },
-  christmas: {
-    id: 'christmas',
-    name: 'Share the Xmas spirit',
-    description: `
-Discovered the magic of Christmas along your route? Sing a carol in front of some Xmas decorations. 
 
-Snap a team selfie for bonus points.
-    `,
-    points: 3,
-    scoring: 'video',
+Distilling the essence of Olsen's esteemed career, spanning over sixty years, the animated artwork Lighting of the Sails: Life Enlivened spotlights Olsen’s enduring interest and fascination with Australian nature and landscape. Through images selected by curator Dr. Deborah Hart and animated by creative technologists Curiious, Life Enlivened (2023) celebrates the propulsive power of Olsen's painterly brush to envision the natural world anew.`,
+    link: 'https://www.vividsydney.com/event/light/lighting-of-the-sails-life-enlivened-john-olsen',
+  },
+  biotechture: {
+    id: 'biotechture',
+    location: {
+      coords: [-33.8575025, 151.2094602],
+      name: 'ASN Clock Tower',
+      link: 'https://goo.gl/maps/Zw1uizR8SKEna45t6',
+      photo:
+        'https://www.vividsydney.com/sites/default/files/styles/original_compressed/public/events/1pzdk4xP_L-4VNvDoynfBgVosJMwFf08B.jpeg?itok=UwP3cXpW',
+    },
+    name: 'Biotechture',
+    description: `
+Buildings aren't so different from bodies: humans are also architectural wonders, having evolved to improve over millennia. Our entire ecosystem, too, is filled with mathematical marvels and smart design - the otherworldly Biotechture imagines what it would mean if our human-made structures were living and breathing. Peeling back the ASN Clock Tower's façade, Biotechture is an otherworldly view into the arteries, bones and all behind the building. It's also a reminder of the beautiful architecture that makes up both our city and the natural world.`,
+    link: 'https://www.vividsydney.com/event/light/biotechture',
+    cinewavLink: 'https://cinewav.page.link/BwX3',
+  },
+  cityGazing: {
+    id: 'cityGazing',
+    location: {
+      coords: [-33.8560556, 151.2080278],
+      name: 'Dawes Point Park',
+      link: 'https://goo.gl/maps/4jgXYwdAaHy7vKSY9',
+      photo:
+        'https://www.vividsydney.com/sites/default/files/styles/original_compressed/public/2023-02/City-Gazing-desk.jpg?itok=kpqOOpB5',
+    },
+    name: 'City Gazing Sydney',
+    description: `
+With their ongoing global City Gazing series, VOUW recreates a view that very few humans would normally see with their own eyes: the Earth from space.
+
+
+At night, astronauts see cities as glowing arteries, the shining outline inspiring both awe at humanity's might and our meekness.`,
+    link: 'https://www.vividsydney.com/event/light/city-gazing-sydney',
   },
 }
-
-export const locationChallenges: string[] = sortBy(
-  Object.values(challenges).filter((c) => c.location),
-  (c) => c.name
-).map((c) => c.id)
-export const anywhereChallenges: string[] = Object.values(challenges)
-  .filter((c) => !c.location)
-  .map((c) => c.id)

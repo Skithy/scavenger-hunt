@@ -1,6 +1,5 @@
 <script type="ts">
   import type { Challenge } from './data/challenges'
-  import cupIcon from './assets/icons/cup.svg'
   import { markerDistances, markerStates } from './data/stores'
   import Icon from './Icon.svelte'
 
@@ -27,7 +26,7 @@
     {#each challenges as challenge}
       <li class="contents">
         <button
-          class="transition border-b-2 border-base-300 active:bg-base-200 "
+          class="transition border-b-2 border-base-300 active:bg-base-200"
           on:click={() => focusMarker(challenge.id)}
         >
           <div
@@ -60,11 +59,6 @@
                   {challenge.location.name}
                 </span>
               {/if}
-              <img
-                src={cupIcon}
-                alt="Points"
-                class="inline h-4 w-4 align-bottom"
-              />{' '}{challenge.points ?? 'Many'}
             </div>
           </div>
         </button>

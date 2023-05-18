@@ -3,11 +3,9 @@
   import { cubicIn, cubicOut } from 'svelte/easing'
   import lockIcon from './assets/icons/lock.svg'
   import leftIcon from './assets/icons/left.svg'
-  import cameraIcon from './assets/icons/camera.svg'
-  import cupIcon from './assets/icons/cup.svg'
-  import clockIcon from './assets/icons/clock.svg'
-  import chatIcon from './assets/icons/chat.svg'
-  import videoIcon from './assets/icons/video.svg'
+  import topRightIcon from './assets/icons/up-right.svg'
+  import locationIcon from './assets/icons/location.svg'
+  import cinewav from './assets/photos/cinewav.png'
   import { renderer } from './utils/markdown'
   import { challenges } from './data/challenges'
   import { marked } from 'marked'
@@ -55,13 +53,26 @@
         <a
           href={challenge.location.link}
           target="_blank"
-          class="underline font-bold"
-          rel="noreferrer">{challenge.location.name}</a
+          class="underline inline-flex items-center gap-x-1"
+          rel="noreferrer"
+          ><img
+            src={locationIcon}
+            alt="Location"
+            height="16"
+            width="16"
+          />{challenge.location.name}</a
         >
       {:else}
         Anywhere
       {/if}
     </h2>
+    <div class="-mx-4 mb-6">
+      <img
+        class="w-full"
+        src={challenge.location.photo}
+        alt={challenge.location.name}
+      />
+    </div>
     <div class="prose text-base-content">
       {#if state === 'locked'}
         <p>This is a locked challenge.</p>
@@ -72,69 +83,50 @@
         {@html marked(challenge.description, { renderer })}
       {/if}
     </div>
-    <ul class="text-sm mt-6 flex flex-col gap-y-3">
-      <li class="flex gap-x-2">
-        <img src={cupIcon} alt="Points" />
-        <span>
-          {#if challenge.points}
-            Earn {challenge.points} point{challenge.points > 1 ? 's' : ''}
-          {:else}
-            Earn 1 point per photo
-          {/if}
-        </span>
-      </li>
-      {#if challenge.scoring === 'photo'}
-        <li class="flex gap-x-2">
-          <img src={cameraIcon} alt="Proof" />
-          <span>Upload photos to your Slack channel</span>
-        </li>
-      {:else if challenge.scoring === 'video'}
-        <li class="flex gap-x-2">
-          <img src={videoIcon} alt="Video" />
-          <span>Upload video to your Slack channel</span>
-        </li>
-      {:else if challenge.scoring === 'answer'}
-        <li class="flex gap-x-2">
-          <img src={chatIcon} alt="Time limit" />
-          <span>Share answer in your Slack channel</span>
-        </li>
-      {:else if challenge.scoring === 'manned'}
-        <li class="flex gap-x-2">
-          <img src={clockIcon} alt="Time limit" />
-          <span>Activity closes at <b>5.15pm</b></span>
-        </li>
-      {/if}
-    </ul>
-
-    <div class="text-sm" />
-    {#if challenge.location}
-      <a
-        href={challenge.location.link}
-        target="_blank"
-        rel="noreferrer"
-        class="bg-accent text-accent-content rounded-full p-4 text-md font-bold my-6 w-full block text-center"
-        >Get directions</a
+    <a
+      href={challenge.link}
+      target="_blank"
+      rel="noreferrer"
+      class="flex items-center gap-x-1 mt-6 text-sm"
+      ><img src={topRightIcon} alt="Location" height="16" width="16" />More
+      details</a
+    >
+    {#if challenge.cinewavLink}
+      <div
+        class="border-y-2 py-6 border-base-300 mt-6 mb-8 flex gap-x-2 items-center"
       >
+        <div>
+          <img src={cinewav} alt="Cinewav app" height="40" width="40" />
+        </div>
+        <div>
+          <div>Listen with Cinewav</div>
+          <a
+            href={challenge.cinewavLink}
+            target="_blank"
+            rel="noreferrer"
+            class="text-primary text-sm">Download audio ticket</a
+          >
+        </div>
+      </div>
     {/if}
+
+    <a
+      href={challenge.location.link}
+      target="_blank"
+      rel="noreferrer"
+      class="bg-primary text-primary-content rounded-full p-4 text-base font-bold my-6 w-full block text-center"
+      >Get directions</a
+    >
     {#if state !== 'locked'}
-      <label class="text-sm flex justify-between items-center mt-6 mb-10">
-        Nailed it. Cross it off my list!
+      <label class="text-sm flex justify-between items-center my-6">
+        Cross it off my list!
         <input
           on:change={() => completeChallenge()}
           checked={state === 'done'}
-          class="toggle toggle-secondary toggle-lg"
+          class="toggle toggle-primary toggle-lg"
           type="checkbox"
         />
       </label>
-    {/if}
-    {#if challenge.location}
-      <div class="overflow-hidden rounded-lg pb-4">
-        <img
-          class="w-full"
-          src={challenge.location.photo}
-          alt={challenge.location.name}
-        />
-      </div>
     {/if}
   </div>
 </div>

@@ -60,8 +60,8 @@
   onMount(() => {
     map = Leaflet.map('map', {
       maxBounds: [
-        [-33.85, 151.19972638009483],
-        [-33.868, 151.218],
+        [-33.85, 151.19],
+        [-33.88, 151.22],
       ],
     })
       .setView([-33.85803526895217, 151.20859419563487], 16)
@@ -72,7 +72,7 @@
       })
 
     Leaflet.tileLayer(
-      'https://{s}.tile.jawg.io/jawg-sunny/{z}/{x}/{y}{r}.png?access-token=GZQzSfPKg5ysveVGL3cr0No9YYGhlNkbxtpqF8nyQu4qWnSXj83kZpwnzG73lVmF',
+      'https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=GZQzSfPKg5ysveVGL3cr0No9YYGhlNkbxtpqF8nyQu4qWnSXj83kZpwnzG73lVmF',
       {
         minZoom: 15,
         maxZoom: 20,
@@ -218,14 +218,14 @@
 <svelte:window on:popstate={onHashChange} />
 
 <main class="h-full flex flex-col md:flex-row">
-  <div id="map" class="relative flex-1 -mb-8 md:mb-0">
+  <div id="map" class="relative flex-1 -mb-8 md:mb-0 !bg-base-100">
     <div class="absolute top-4 right-4 flex flex-col gap-y-2 z-[9999]">
       <button
         on:click={(e) => {
           e.stopPropagation()
           toggleHelp()
         }}
-        class="flex justify-center items-center h-11 w-11 bg-base-100 rounded-full shadow-md"
+        class="flex justify-center items-center h-11 w-11 bg-info rounded-full shadow-md"
       >
         <img src={questionIcon} alt="Info" />
       </button>
@@ -237,7 +237,7 @@
           on:click={centerLocation}
           class="flex justify-center items-center h-11 w-11 {locationError
             ? 'bg-error'
-            : 'bg-base-100'} rounded-full shadow-md"
+            : 'bg-info'} rounded-full shadow-md"
         >
           <img src={positionIcon} alt="Current position" />
         </button>

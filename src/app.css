@@ -23,6 +23,7 @@ body,
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: contain;
+  background: #222222;
 }
 
 .leaflet-marker-icon {

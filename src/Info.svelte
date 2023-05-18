@@ -2,6 +2,8 @@
   import { fly } from 'svelte/transition'
   import { cubicIn, cubicOut } from 'svelte/easing'
   import leftIcon from './assets/icons/left.svg'
+  import upRightIcon from './assets/icons/up-right.svg'
+  import cinewav from './assets/photos/cinewav.png'
 
   export let onClose: () => void
 </script>
@@ -25,27 +27,75 @@
     class="px-3 py-4 flex w-full transition active:bg-base-200"
     on:click={onClose}><img src={leftIcon} alt="Back" /></button
   >
-  <div class="px-4">
-    <h1 class="text-lg mb-4">How to play</h1>
+  <div class="px-4 overflow-auto">
+    <h1 class="text-lg mb-4">
+      Vivid Light Walk
+      <a
+        href="https://www.vividsydney.com/itinerary/the-ultimate-8km-vivid-sydney-light-walk"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          src={upRightIcon}
+          alt="Read more about the Vivid Light Walk"
+          height="24"
+          width="24"
+          class="inline-block"
+        />
+      </a>
+    </h1>
 
     <div class="prose text-base-content">
       <p>
-        You have one hour to finish as many challenges as you can – you can
-        choose how many you’d like to do and in which order, it’s up to you!
+        This year’s Vivid Light Walk attractions include light installations,
+        3D-mapped projections, venue takeovers and jaw-dropping spectacles.
       </p>
       <p>
-        Remember, the team with the most points at the end claims glory and a
-        schweet prize.
+        Use this map to find your way to attractions in Circular Quay and The
+        Rocks.
       </p>
     </div>
 
-    <h1 class="text-lg mb-4 mt-6">Locked challenges</h1>
+    <h1 class="text-lg mb-4 mt-6">
+      Cinewav
+      <a
+        href="https://www.vividsydney.com/how-to-use-cinewav"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          src={upRightIcon}
+          alt="Read more about Cinewav"
+          height="24"
+          width="24"
+          class="inline-block"
+        />
+      </a>
+    </h1>
 
     <div class="prose text-base-content">
       <p>
-        Make your way towards the location and the details will be revealed when
-        you’re close by.
+        Put on some earphones or headphones and enjoy immersive HD audio
+        perfectly in-sync with a public show.
       </p>
+      <p>
+        We recommend you do this when you’re connected to Wifi to save on your
+        mobile data.
+      </p>
+    </div>
+    <div class="flex gap-x-2 mt-6 items-center">
+      <div>
+        <img src={cinewav} alt="Cinewav app" height="40" width="40" />
+      </div>
+      <div>
+        <div>Listen with Cinewav</div>
+        <a
+          href="http://onelink.to/h875sa"
+          target="_blank"
+          rel="noreferrer"
+          class="text-primary text-sm">Download app</a
+        >
+      </div>
     </div>
   </div>
 </div>

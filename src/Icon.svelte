@@ -1,5 +1,5 @@
 <script type="ts">
-  import type { Challenge } from './data/challenges'
+  import { challenges, type Challenge } from './data/challenges'
   import { doneClass, lockedClass, unlockedClass } from './data/icons'
   import { markerStates } from './data/stores'
   import tickIcon from './assets/icons/tick.svg'
@@ -13,7 +13,9 @@
   </div>
 {:else if $markerStates[challenge.id] === 'unlocked'}
   <div class={unlockedClass}>
-    {challenge.name[0]}
+    {(
+      Object.values(challenges).findIndex((c) => c.id === challenge.id) + 1
+    ).toString()}
   </div>
 {:else}
   <div class={doneClass}>
