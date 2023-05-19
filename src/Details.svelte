@@ -48,12 +48,12 @@
         <img src={lockIcon} alt="locked" />
       {/if}
     </h1>
-    <h2 class="text-xs mt-2 mb-6">
+    <h2 class="text-sm mt-2 mb-6">
       {#if challenge.location}
         <a
           href={challenge.location.link}
           target="_blank"
-          class="underline inline-flex items-center gap-x-1"
+          class="text-primary inline-flex items-center gap-x-1"
           rel="noreferrer"
           ><img
             src={locationIcon}
@@ -87,7 +87,7 @@
       href={challenge.link}
       target="_blank"
       rel="noreferrer"
-      class="flex items-center gap-x-1 mt-6 text-sm"
+      class="flex items-center gap-x-1 mt-6 text-sm text-primary"
       ><img src={topRightIcon} alt="Location" height="16" width="16" />More
       details</a
     >
