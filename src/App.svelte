@@ -12,6 +12,7 @@
     hereLowIcon,
     hereYellowIcon,
     lockedIcon,
+    officeIcon,
     unlockedIcon,
   } from './data/icons'
   import Sidebar from './Sidebar.svelte'
@@ -38,6 +39,10 @@
   }
 
   const posMarker = Leaflet.marker([0, 0], { icon: hereIcon })
+  const officeMarker = Leaflet.marker(
+    [-33.85727682771697, 151.20939647855363],
+    { icon: officeIcon, zIndexOffset: 10000 }
+  )
   const markers: Record<string, Leaflet.Marker | undefined> = Object.entries(
     challenges
   ).reduce((total, [id, challenge]) => {
@@ -80,6 +85,8 @@
     ).addTo(map)
 
     posMarker.addTo(map)
+    officeMarker.addTo(map)
+
     Object.entries(markers).forEach(([id, marker]) => {
       if (marker) {
         marker.on('click', () => focusMarker(id)).addTo(map)

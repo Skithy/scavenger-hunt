@@ -1,5 +1,6 @@
 import Leaflet from 'leaflet'
 import tickIcon from '../assets/icons/tick.svg'
+import houseIcon from '../assets/icons/house.svg'
 import { challenges, type Challenge } from './challenges'
 
 const mapMode = new URLSearchParams(location.search).get('map')
@@ -32,11 +33,10 @@ export const doneIcon = (active = false) =>
     html: `<img src=${tickIcon} alt="Done" />`,
   })
 
-const hereClass =
-  '!h-4 !w-4 rounded-full shadow-md border-2 border-white bg-accent'
+const hereClass = '!h-4 !w-4 rounded-full shadow-md border-2 border-white'
 
 export const hereIcon = Leaflet.divIcon({
-  className: `bg-info ${hereClass}`,
+  className: `bg-accent ${hereClass}`,
 })
 
 export const hereYellowIcon = Leaflet.divIcon({
@@ -45,4 +45,10 @@ export const hereYellowIcon = Leaflet.divIcon({
 
 export const hereLowIcon = Leaflet.divIcon({
   className: `bg-error ${hereClass}`,
+})
+
+export const officeIcon = Leaflet.divIcon({
+  className:
+    '!h-8 !w-8 bg-[#fff0eb] rounded-full shadow-md !flex items-center justify-center',
+  html: `<img src=${houseIcon} alt="Honey Office" />`,
 })
