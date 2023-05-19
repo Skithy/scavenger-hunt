@@ -138,6 +138,24 @@ With their ongoing global City Gazing series, VOUW recreates a view that very fe
 At night, astronauts see cities as glowing arteries, the shining outline inspiring both awe at humanity's might and our meekness.`,
     link: 'https://www.vividsydney.com/event/light/city-gazing-sydney',
   },
+  dandelion: {
+    id: 'dandelion',
+    location: {
+      coords: [-33.855523, 151.210472],
+      name: 'Hickson Road Reserve',
+      link: 'https://goo.gl/maps/t2mdbsEjbBDogdoH6',
+      photo:
+        'https://www.vividsydney.com/sites/default/files/styles/original_compressed/public/events/1drKcpEVBO2ZFhpRytei8FwfntTWl_nVO.jpeg?itok=eLIr3J_n',
+    },
+    name: 'Dandelion',
+    description: `
+Make a wish, take a deep breath, and come watch Dandelion blow!
+
+This 4,000kg steel recreation of the flower's wispy calyx, also known as a 'pappus', may appear less fragile than the common dandelion, but the pappus is much stronger than it looks. Not only has this flower found a home across much of the globe, but it's able to retain roughly 100 times its own weight in water. And don't forget, folklore says making a wish while blowing it apart will make sure it comes true.
+
+A testament to the flower's strength and beauty, this installation moves continually in a dazzling dance. Take in its beauty from afar, or head into the pappus dome to be in the thick of it, with hand sensors to send your own light-shifting winds across the flower.`,
+    link: 'https://www.vividsydney.com/event/light/dandelion',
+  },
   futureNatives: {
     id: 'futureNatives',
     location: {
